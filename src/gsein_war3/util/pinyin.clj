@@ -6,7 +6,7 @@
 
 
 (defn get-pinyin-name [name]
-  (let [o-name (subs name 0 (str/index-of name "."))]
+  (let [o-name (if (str/includes? name ".") (subs name 0 (str/index-of name ".")) name)]
     (try (PinyinHelper/toHanYuPinyinString o-name
                                            (doto (HanyuPinyinOutputFormat.)
                                              (.setVCharType HanyuPinyinVCharType/WITH_V)

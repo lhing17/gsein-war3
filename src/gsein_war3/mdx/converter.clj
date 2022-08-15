@@ -3,7 +3,8 @@
             [gsein-war3.mdx.parser :as parser])
   (:import (java.io RandomAccessFile File)
            (java.util Arrays)
-           (java.nio.charset StandardCharsets)))
+           (java.nio.charset StandardCharsets)
+           (org.apache.commons.io FileUtils)))
 
 (defn write-str [^RandomAccessFile raf ^String s len]
   (.write raf (Arrays/copyOf (.getBytes s StandardCharsets/UTF_8) len)))
@@ -19,7 +20,6 @@
 (defn write-textures [^RandomAccessFile wtr textures old-blp-path new-blp-path]
   (doseq [texture textures]
     (let [path (:image texture)]
-      (println texture)
       (write-int wtr (:replace-id texture))
       (write-str wtr (if (= path old-blp-path) new-blp-path path) 256)
       (write-int wtr (:unknown texture))
@@ -37,7 +37,6 @@
     (while (< (.getFilePointer rdr) (.length rdr))
       (let [ckw (parser/mdx-keyword rdr)
             csize (parser/read-int rdr)]
-        (println csize)
         (write-str wtr ckw 4)
         (write-int wtr csize)
         (if (= ckw "TEXS")
@@ -45,8 +44,11 @@
           (let [bytes (byte-array csize)]
             (.read rdr bytes)
             (.write wtr bytes )))))
+    (.close wtr)
+    (.close rdr)
+    (FileUtils/copyFile tmp mdx-file)
+    (FileUtils/delete tmp)))
 
-    ))
 
 
 (comment
