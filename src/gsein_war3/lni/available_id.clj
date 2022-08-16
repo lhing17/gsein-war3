@@ -48,19 +48,25 @@
              (filterv #(and (str/starts-with? % "[") (str/ends-with? % "]")))
              (mapv #(str/replace % #"\[|\]" "")))))))
 
-(defn get-available-ids [n id-producer type]
-  "获取n个可用ID"
-  (let [start-id
-        (cond (= type :ability) "A000"
-              (= type :item) "I000"
-              (= type :unit) "e000"
-              (= type :hero) "E000"
-              (= type :buff) "B000"
-              :else "A000")]
-    (loop [ids [], count n, id start-id]
-      (cond (= count 0) ids
-            (available? id (id-producer type)) (recur (conj ids id) (dec count) (next-id id))
-            :else (recur ids count (next-id id))))))
+(defn get-available-ids
+
+  ([n id-producer type start-id]
+   "获取n个可用ID"
+
+   (loop [ids [], count n, id start-id]
+     (cond (= count 0) ids
+           (available? id (id-producer type)) (recur (conj ids id) (dec count) (next-id id))
+           :else (recur ids count (next-id id)))))
+  ([n id-producer type]
+   (let [start-id
+         (cond (= type :ability) "A000"
+               (= type :item) "I000"
+               (= type :unit) "e000"
+               (= type :hero) "E000"
+               (= type :buff) "B000"
+               :else "A000")]
+     (get-available-ids n id-producer type start-id)
+     )))
 
 (defn get-available-id [id-producer type]
   "获取一个可用ID"
@@ -71,5 +77,5 @@
   (next-id "A00Z")
   (def project-dir (:project-dir env))
   ((project-id-producer project-dir) :ability)
-  (get-available-ids 5 (project-id-producer project-dir) :ability)
+  (get-available-ids 5 (project-id-producer project-dir) :item "Q100")
   ,)
