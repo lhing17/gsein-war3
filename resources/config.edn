@@ -1,6 +1,13 @@
+;{
+; :temp-dir    "D:/tmp"
+; :project-dir "D:/IdeaProjects/jzjh-reborn/jzjh"
+; :workspace   "D:/IdeaProjects/jzjh-reborn"
+; :out-dir    "D:/IdeaProjects/jzjh-reborn/out"
+; }
+
 {
  :temp-dir    "D:/tmp"
- :project-dir "D:/IdeaProjects/jzjh-reborn/jzjh"
- :workspace   "D:/IdeaProjects/jzjh-reborn"
- :out-dir    "D:/IdeaProjects/jzjh-reborn/out"
+ :project-dir "D:/IdeaProjects/small/small"
+ :workspace   "D:/IdeaProjects/small"
+ :out-dir    "D:/IdeaProjects/small/out"
  }

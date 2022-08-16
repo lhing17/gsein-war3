@@ -19,6 +19,8 @@
                  [commons-io "2.11.0"]
                  ;; 生成blp
                  [com.github.PhoenixZeng/BLP_IIO_Plugins "f3cfe38a66"]
+                 ;; 操作excel
+                 [dk.ative/docjure "1.17.0"]
                  ]
   :repositories [["jitpack" "https://jitpack.io"]]
   :repl-options {:init-ns gsein-war3.core})
