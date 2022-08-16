@@ -116,5 +116,7 @@
                                  :move-speed "移动速度"
                                  :mp-max "法力上限"
                                  :mp-regen "法力回复"))
-  (map #(get-base-attrs % attr-map) (drop 2 objs) )
+  (def attrs (map #(vector (:name %) (get-base-attrs % attr-map)) (drop 2 objs)))
+  (def ids (aid/get-available-ids (count attrs) (aid/project-id-producer (:project-dir env)) :item "I200"))
+  (spit "a.txt" (str/join "\n" (map #(sp/render-file (jio/resource "templates/装备物品.ini") {:id % :art "" :basic-attr (second %2) :name (first %2) :skill ""}) ids attrs)))
   ,)
