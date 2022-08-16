@@ -21,6 +21,8 @@
                  [com.github.PhoenixZeng/BLP_IIO_Plugins "f3cfe38a66"]
                  ;; 操作excel
                  [dk.ative/docjure "1.17.0"]
+                 ;; 有序map
+                 [org.flatland/ordered "1.15.10"]
                  ]
   :repositories [["jitpack" "https://jitpack.io"]]
   :repl-options {:init-ns gsein-war3.core})

@@ -4,7 +4,8 @@
             [clojure.java.io :as jio]
             [gsein-war3.lni.available-id :as aid]
             [gsein-war3.config :as config]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [flatland.ordered.map :as fom]))
 
 (def env (config/get-config))
 
@@ -12,6 +13,15 @@
   (->> (load-workbook-from-file xls-file)
        (select-sheet sheet-name)
        (select-columns column-map)))
+
+(defn get-base-attrs [obj attr-map]
+  (->> (map (fn [kv]
+              (let [v (get obj (first kv))
+                    nm (second kv)]
+                (if v (str nm "+" (if (== v (int v)) (int v) v) "|n") nil)
+                )) attr-map)
+       (filter identity)
+       (str/join)))
 
 
 (comment
@@ -83,4 +93,28 @@
                             (sort)))
   (def ids (aid/get-available-ids (count add-move-speeds) (aid/project-id-producer (:project-dir env)) :ability))
   (spit "a.txt" (str/join "\n" (map #(sp/render-file (jio/resource "templates/加移动速度物品技能.ini") {:id % :add %2}) ids add-move-speeds)))
+  (def obj (nth objs 3))
+  (def attr-map (fom/ordered-map :intellect "悟性"
+                                 :strength "根骨"
+                                 :luck "福缘"
+                                 :medical "医术"
+                                 :str "招式"
+                                 :agi "身法"
+                                 :int "内力"
+                                 :hp "生命值"
+                                 :hp-regen "生命回复"
+                                 :hp-regen-percent "百分比生命回复"
+                                 :def "防御"
+                                 :dodge "闪避"
+                                 :kill-regen "杀怪回复"
+                                 :damage-absorb "伤害吸收"
+                                 :critical-rate "暴击率"
+                                 :critical-damage "暴击伤害"
+                                 :understanding "绝学领悟"
+                                 :attack-speed "攻击速度"
+                                 :damage-addition "伤害加成"
+                                 :move-speed "移动速度"
+                                 :mp-max "法力上限"
+                                 :mp-regen "法力回复"))
+  (map #(get-base-attrs % attr-map) (drop 2 objs) )
   ,)
