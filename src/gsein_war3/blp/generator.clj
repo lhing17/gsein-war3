@@ -65,7 +65,7 @@
   (let [coll (get-fn-coll active-type (.getName image-file))
         image (img/resize-to-64 (ImageIO/read image-file))
         temp-blps (map-deal-image! image coll)]
-    (map #(copy %) temp-blps)))
+    (mapv #(copy %) temp-blps)))
 
 (comment
   (def books (map-deal-image!
@@ -74,11 +74,16 @@
                ))
 
   (def image (img/resize-to-64 (ImageIO/read (java.io.File. "D:\\IdeaProjects\\small\\resources\\images\\天鹰.png"))))
-  (def border  (img/add-border (identity image) :active {:filter-type :default}))
+  (def border (img/add-border (identity image) :active {:filter-type :default}))
   (ImageIO/write border "png" (java.io.File. "D:\\tmp\\天鹰.png"))
   (img/output-as-blp border (command-dir "D:\\tmp") (pinyin/get-pinyin-name "天鹰.png") "BTN")
 
   (doseq [book books] (copy book))
 
   (generate-blps (java.io.File. "D:\\IdeaProjects\\small\\resources\\images\\清凉.png") "active")
+
+  (doseq [file (file-seq (jio/file "E:\\War3Map\\美术\\武器\\small\\P完"))]
+    (when (.isFile file)
+      (generate-blps file "passive")))
+  (generate-blps (jio/file "E:\\War3Map\\美术\\武器\\small\\P完\\精钢护腕.jpg") "passive")
   ,)
