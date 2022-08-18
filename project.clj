@@ -23,6 +23,9 @@
                  [dk.ative/docjure "1.17.0"]
                  ;; 有序map
                  [org.flatland/ordered "1.15.10"]
+                 ;; 支持tga格式
+                 [com.twelvemonkeys.imageio/imageio-tga "3.8.2"]
+
                  ]
   :repositories [["jitpack" "https://jitpack.io"]]
   :repl-options {:init-ns gsein-war3.core})
