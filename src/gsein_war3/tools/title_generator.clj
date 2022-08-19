@@ -107,7 +107,7 @@
                "登峰造极" "无与伦比" "所向披靡" "一代宗师" "精深奥妙" "神功盖世" "举世无双" "惊世骇俗" "撼天动地" "震古铄今" "超凡入圣"
                "威镇寰宇" "空前绝后" "天人合一" "深藏不露" "深不可测" "返璞归真"])
   (doseq [v  (map-indexed vector titles)]
-    (ImageIO/write (create-img (second v) 64 64 (Color. 0x312B43) (jio/file (jio/resource (str "images/wing" (inc (quot (first v) 10)) ".png")))) "tga" (jio/file "D:\\tmp\\out" (str "title-" (first v) ".tga")))
+    (ImageIO/write (create-img (second v) 64 64 (Color. 0x312B43) (jio/file (jio/resource (str "images/wing" (inc (quot (first v) 10)) ".png")))) "png" (jio/file "D:\\tmp\\out" (str "title" (first v) ".png")))
     )
 
   ,)

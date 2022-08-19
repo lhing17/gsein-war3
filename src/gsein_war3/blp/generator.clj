@@ -82,8 +82,9 @@
 
   (generate-blps (java.io.File. "D:\\IdeaProjects\\small\\resources\\images\\清凉.png") "active")
 
-  (doseq [file (file-seq (jio/file "E:\\War3Map\\美术\\武器\\small\\P完"))]
+  (doseq [file (file-seq (jio/file "D:\\tmp\\out"))]
     (when (.isFile file)
       (generate-blps file "passive")))
+
   (generate-blps (jio/file "E:\\War3Map\\美术\\武器\\small\\P完\\精钢护腕.jpg") "passive")
   ,)
