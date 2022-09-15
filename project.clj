@@ -28,4 +28,5 @@
 
                  ]
   :repositories [["jitpack" "https://jitpack.io"]]
-  :repl-options {:init-ns gsein-war3.core})
+  :repl-options {:init-ns gsein-war3.core
+                 :nrepl-middleware [vlaaad.reveal.nrepl/middleware]})
