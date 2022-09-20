@@ -53,18 +53,17 @@
   ([n id-producer type start-id]
    "获取n个可用ID"
 
-   (loop [ids [], count n, id start-id]
-     (cond (= count 0) ids
-           (available? id (id-producer type)) (recur (conj ids id) (dec count) (next-id id))
-           :else (recur ids count (next-id id)))))
+   (->> (iterate next-id start-id)
+        (filter #(available? % (id-producer type)))
+        (take n)))
   ([n id-producer type]
    (let [start-id
-         (cond (= type :ability) "A000"
-               (= type :item) "I000"
-               (= type :unit) "e000"
-               (= type :hero) "E000"
-               (= type :buff) "B000"
-               :else "A000")]
+         (case type :ability "A000"
+                    :item "I000"
+                    :unit "e000"
+                    :hero "E000"
+                    :buff "B000"
+                    "A000")]
      (get-available-ids n id-producer type start-id)
      )))
 
@@ -75,7 +74,11 @@
 (comment
   (next-char \9)
   (next-id "A00Z")
+  (take 5 (iterate next-id "A000"))
+  (->> (iterate next-id "A000")
+       (filter #(available? % ((project-id-producer project-dir) :ability)))
+       (take 5))
   (def project-dir (:project-dir env))
   ((project-id-producer project-dir) :ability)
-  (get-available-ids 5 (project-id-producer project-dir) :item "Q100")
+  (get-available-ids 5 (project-id-producer project-dir) :item)
   ,)
