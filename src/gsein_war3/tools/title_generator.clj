@@ -34,7 +34,7 @@
 
     (let [;; 计算画笔起点坐标（称号文字居中）
           clip (.getClipBounds g)
-          font (Font. "微软雅黑" Font/PLAIN 14)
+          font (Font. "华文行楷" Font/PLAIN 40)
           fm (.getFontMetrics g font)
           ascent (.getAscent fm)
           descent (.getDescent fm)
@@ -100,7 +100,7 @@
     (converter/replace-blp mdx-file "war3mapImported\\kangkang.blp" (.getName blp-file))))
 
 (comment
-  (generate-title! "材料商店" Color/PINK (jio/file (jio/resource "images/wing3.png")) (:out-dir env))
+  (generate-title! "水煮蛋蛋" Color/BLUE (jio/file (jio/resource "images/wing1.png")) (:out-dir env))
   (def titles ["不堪一击" "毫不足虑" "不足挂齿" "初学乍练" "勉勉强强" "初窥门径" "初出茅庐" "略知一二" "普普通通" "平平常常" "平淡无奇"
                "粗懂皮毛" "半生不熟" "登堂入室" "略有小成" "已有小成" "鹤立鸡群" "驾轻就熟" "青出於蓝" "融会贯通" "心领神会" "炉火纯青"
                "了然於胸" "略有大成" "已有大成" "豁然贯通" "非比寻常" "出类拔萃" "罕有敌手" "技冠群雄" "神乎其技" "出神入化" "傲视群雄"
