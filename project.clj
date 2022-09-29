@@ -27,7 +27,8 @@
                  [com.twelvemonkeys.imageio/imageio-tga "3.8.3"]
                  ;; UI
                  [seesaw "1.5.0"]
-
+                 ;; https://mvnrepository.com/artifact/com.formdev/flatlaf
+                 [com.formdev/flatlaf "2.4"]
                  ]
   :repositories [["jitpack" "https://jitpack.io"]]
   :repl-options {:init-ns gsein-war3.core
