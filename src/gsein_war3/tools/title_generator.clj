@@ -107,6 +107,11 @@
     (.dispose g)
     img))
 
+(defn get-file-pinyin-name-without-extension [^File file]
+  (let [name (.getName file)
+        raw-name (subs name 0  (.lastIndexOf name "."))]
+    (pinyin/get-pinyin-name raw-name)))
+
 (defn generate-title-with-image! [img blp-name out-dir]
   (let [blp-file (jio/file out-dir "temp" (str blp-name ".blp"))
         blp-parent (.getParentFile blp-file)
@@ -115,8 +120,8 @@
         buffered-img (get-scaled-image (ImageIO/read (jio/file img)) 256 128)]
     ;; 如果目录不存在，则创建目录
     (.mkdirs blp-parent)
-    ;; 删除临时文件
-    (delete-files-in-dir blp-parent)
+    ;;; 删除临时文件
+    ;(delete-files-in-dir blp-parent)
 
     ;; 生成blp图片
     (ImageIO/write buffered-img "blp" blp-file)
@@ -128,6 +133,13 @@
 (comment
   (generate-title! "领取福利" Color/BLUE (jio/file (jio/resource "images/background/3.png")) (:out-dir env))
   (generate-title-with-image! "D:/IdeaProjects/JZJH/resources/头顶称号/绝世内功.png" "jueshineigong" (:out-dir env))
+
+(doseq [file (file-seq (jio/file "D:\\IdeaProjects\\JZJH\\resources\\头顶称号\\png"))]
+  (when (.isFile file)
+    (generate-title-with-image! (.getAbsolutePath file) (get-file-pinyin-name-without-extension file) (:out-dir env))))
+
+  (get-file-pinyin-name-without-extension (jio/file "D:\\IdeaProjects\\jzjh-reborn\\out\\temp\\lingqifu.blp"))
+
   (def titles ["不堪一击" "毫不足虑" "不足挂齿" "初学乍练" "勉勉强强" "初窥门径" "初出茅庐" "略知一二" "普普通通" "平平常常" "平淡无奇"
                "粗懂皮毛" "半生不熟" "登堂入室" "略有小成" "已有小成" "鹤立鸡群" "驾轻就熟" "青出於蓝" "融会贯通" "心领神会" "炉火纯青"
                "了然於胸" "略有大成" "已有大成" "豁然贯通" "非比寻常" "出类拔萃" "罕有敌手" "技冠群雄" "神乎其技" "出神入化" "傲视群雄"
