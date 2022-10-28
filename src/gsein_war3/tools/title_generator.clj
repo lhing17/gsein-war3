@@ -34,7 +34,7 @@
 
     (let [;; 计算画笔起点坐标（称号文字居中）
           clip (.getClipBounds g)
-          font (Font. "华文行楷" Font/PLAIN 40)
+          font (Font. "方正颜宋简体_粗" Font/PLAIN 40)
           fm (.getFontMetrics g font)
           ascent (.getAscent fm)
           descent (.getDescent fm)
@@ -99,8 +99,35 @@
     (FileUtils/copyFile template-mdx mdx-file)
     (converter/replace-blp mdx-file "war3mapImported\\kangkang.blp" (.getName blp-file))))
 
+(defn- get-scaled-image [^BufferedImage img w h]
+  (let [scaled-instance (.getScaledInstance img w h Image/SCALE_SMOOTH)
+        img (BufferedImage. w h BufferedImage/TYPE_INT_ARGB)
+        g ^Graphics2D (.getGraphics img)]
+    (.drawImage g scaled-instance 0 0 nil)
+    (.dispose g)
+    img))
+
+(defn generate-title-with-image! [img blp-name out-dir]
+  (let [blp-file (jio/file out-dir "temp" (str blp-name ".blp"))
+        blp-parent (.getParentFile blp-file)
+        template-mdx (jio/file (jio/resource "mdx/template.mdx"))
+        mdx-file (jio/file out-dir "temp" (str blp-name ".mdx"))
+        buffered-img (get-scaled-image (ImageIO/read (jio/file img)) 256 128)]
+    ;; 如果目录不存在，则创建目录
+    (.mkdirs blp-parent)
+    ;; 删除临时文件
+    (delete-files-in-dir blp-parent)
+
+    ;; 生成blp图片
+    (ImageIO/write buffered-img "blp" blp-file)
+
+    ;; 生成mdx文件并替换贴图
+    (FileUtils/copyFile template-mdx mdx-file)
+    (converter/replace-blp mdx-file "war3mapImported\\kangkang.blp" (.getName blp-file))))
+
 (comment
-  (generate-title! "水煮蛋蛋" Color/BLUE (jio/file (jio/resource "images/wing1.png")) (:out-dir env))
+  (generate-title! "领取福利" Color/BLUE (jio/file (jio/resource "images/background/3.png")) (:out-dir env))
+  (generate-title-with-image! "D:/IdeaProjects/JZJH/resources/头顶称号/绝世内功.png" "jueshineigong" (:out-dir env))
   (def titles ["不堪一击" "毫不足虑" "不足挂齿" "初学乍练" "勉勉强强" "初窥门径" "初出茅庐" "略知一二" "普普通通" "平平常常" "平淡无奇"
                "粗懂皮毛" "半生不熟" "登堂入室" "略有小成" "已有小成" "鹤立鸡群" "驾轻就熟" "青出於蓝" "融会贯通" "心领神会" "炉火纯青"
                "了然於胸" "略有大成" "已有大成" "豁然贯通" "非比寻常" "出类拔萃" "罕有敌手" "技冠群雄" "神乎其技" "出神入化" "傲视群雄"

@@ -28,7 +28,7 @@
                  ;; UI
                  [seesaw "1.5.0"]
                  ;; https://mvnrepository.com/artifact/com.formdev/flatlaf
-                 [com.formdev/flatlaf "2.4"]
+                 [com.formdev/flatlaf "2.5"]
                  ]
   :repositories [["jitpack" "https://jitpack.io"]]
   :repl-options {:init-ns gsein-war3.core
