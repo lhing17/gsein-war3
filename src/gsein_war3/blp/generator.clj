@@ -8,6 +8,32 @@
            (javax.imageio ImageIO)
            (org.apache.commons.io FileUtils)))
 
+;; 读取图像 -> 缩放到64*64 -> 根据类型进行亮度处理 -> 根据类型决定是否加上边框 -> 保存到blp文件
+
+;; 类型对应的配置
+(def type-config
+  {:active       {:brightness-fn identity
+                  :border?       true
+                  :dir           :command-dir
+                  :prefix        "BTN"}
+   :active-dark  {:brightness-fn #(img/adjust-brightness % -50)
+                  :border?       false
+                  :dir           :command-disabled-dir
+                  :prefix        "DISBTN"}
+   :passive      {:brightness-fn identity
+                  :border?       false
+                  :dir           :command-dir
+                  :prefix        "PASBTN"}
+   :passive-dark {:brightness-fn #(img/adjust-brightness % -64)
+                  :border?       false
+                  :dir           :command-disabled-dir
+                  :prefix        "DISPASBTN"}
+   :default      {:brightness-fn identity
+                  :border?       false
+                  :dir           :default
+                  :prefix        ""}
+   })
+
 (def env (config/get-config))
 
 (defn- command-dir [base-out-dir]
@@ -86,5 +112,4 @@
     (when (.isFile file)
       (generate-blps file "passive")))
 
-  (generate-blps (jio/file "E:\\War3Map\\美术\\武器\\small\\P完\\精钢护腕.jpg") "passive")
-  ,)
+  (generate-blps (jio/file "/Users/lianghao/IdeaProjects/JZJH/resources/门派图标/jpg/嵩山.jpg") "active"),)
