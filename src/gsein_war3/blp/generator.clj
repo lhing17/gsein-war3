@@ -6,35 +6,38 @@
   (:import (java.io File)
            (java.nio.file Paths)
            (javax.imageio ImageIO)
-           (org.apache.commons.io FileUtils)))
+           (org.apache.commons.io FileUtils)
+           (java.awt.image BufferedImage)))
 
 ;; 读取图像 -> 缩放到64*64 -> 根据类型进行亮度处理 -> 根据类型决定是否加上边框 -> 保存到blp文件
 
 ;; 类型对应的配置
 (def type-config
   {:active       {:brightness-fn identity
-                  :border?       true
+                  :border        :active
                   :dir           :command-dir
                   :prefix        "BTN"}
    :active-dark  {:brightness-fn #(img/adjust-brightness % -50)
-                  :border?       false
+                  :border        :passive
                   :dir           :command-disabled-dir
                   :prefix        "DISBTN"}
    :passive      {:brightness-fn identity
-                  :border?       false
+                  :border        :passive
                   :dir           :command-dir
                   :prefix        "PASBTN"}
    :passive-dark {:brightness-fn #(img/adjust-brightness % -64)
-                  :border?       false
+                  :border        :passive
                   :dir           :command-disabled-dir
                   :prefix        "DISPASBTN"}
    :default      {:brightness-fn identity
-                  :border?       false
+                  :border        :passive
                   :dir           :default
                   :prefix        ""}
    })
 
 (def env (config/get-config))
+
+(defrecord blp [name dir image])
 
 (defn- command-dir [base-out-dir]
   "获取亮图标的路径"
@@ -43,6 +46,26 @@
 (defn- command-disabled-dir [base-out-dir]
   "获取暗图标的路径"
   (str base-out-dir "/ReplaceableTextures/CommandButtonsDisabled"))
+
+(defn- get-dir [type base-dir]
+  (case type
+    :command-dir (command-dir base-dir)
+    :command-disabled-dir (command-disabled-dir base-dir)
+    :default base-dir))
+
+(defn image-to-blp [^BufferedImage image type base-dir name]
+  (let [brightness-fn (:brightness-fn (get type-config type))
+        border (:border (get type-config type))
+        handled-image (-> image
+                          (img/resize-to-64)
+                          (brightness-fn)
+                          (img/add-border border {:filter-type :default}))
+        dir (get-dir type base-dir)]
+    (->blp name dir handled-image)))
+
+(defn output-to-file [^blp blp]
+  )
+
 
 (defn- output-blp [adjust-image-fn type dir-fn prefix]
   "获取输出blp的函数"
