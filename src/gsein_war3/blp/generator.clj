@@ -63,8 +63,16 @@
         dir (get-dir type base-dir)]
     (->blp name dir handled-image)))
 
-(defn output-to-file [^blp blp]
-  )
+(defn output-to-file [^blp {:keys [image dir name]}]
+  (img/output-as-blp image dir name ""))
+
+
+(comment
+  (def base-dir (:project-dir env))
+  (-> (ImageIO/read (File. "E:\\Downloads\\帮助.png"))
+      (image-to-blp :default base-dir "helpme")
+      (output-to-file))
+  ,)
 
 
 (defn- output-blp [adjust-image-fn type dir-fn prefix]

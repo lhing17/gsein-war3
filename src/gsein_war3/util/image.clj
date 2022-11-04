@@ -11,7 +11,7 @@
 (def passive-border-part (take 32 (cons 31 (iterate identity 255))))
 
 (defn resize-to [w h ^BufferedImage origin]
-  (doto (BufferedImage. w h BufferedImage/TYPE_INT_RGB)
+  (doto (BufferedImage. w h BufferedImage/TYPE_INT_ARGB)
     (-> (.getGraphics)
         (.drawImage (.getScaledInstance origin w h Image/SCALE_SMOOTH) 0 0 nil))
     )
@@ -24,7 +24,7 @@
 (defn copy [^BufferedImage image]
   (let [w (.getWidth image nil)
         h (.getHeight image nil)
-        new-image (BufferedImage. w h BufferedImage/TYPE_INT_RGB)]
+        new-image (BufferedImage. w h BufferedImage/TYPE_INT_ARGB)]
     (-> new-image
         (.createGraphics)
         (.drawImage image 0 0 nil)
