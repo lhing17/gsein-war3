@@ -137,7 +137,7 @@
 
   (doseq [book books] (copy book))
 
-  (generate-blps (java.io.File. "D:\\IdeaProjects\\small\\resources\\images\\清凉.png") "active")
+  (generate-blps (java.io.File. "D:\\IdeaProjects\\jztd-reborn\\resources\\图标\\sync.png") "active")
 
   (doseq [file (file-seq (jio/file "D:\\tmp\\out"))]
     (when (.isFile file)

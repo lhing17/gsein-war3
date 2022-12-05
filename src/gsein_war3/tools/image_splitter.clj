@@ -78,8 +78,7 @@
     (javax.imageio.ImageIO/write (second part) "png" (java.io.File. (str (first part) ".png"))))
 
   (write-image my-image "" ["LoadingScreenTL" "LoadingScreenBL" "LoadingScreenTR" "LoadingScreenBR"] "blp")
-  (write-image (make-image [(scale img 512 512)]) "" ["war3mapPreview"] "tga")
-  ,)
+  (write-image (make-image [(scale img 512 512)]) "" ["war3mapPreview"] "tga"),)
 
 
 

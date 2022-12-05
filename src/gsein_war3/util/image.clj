@@ -147,3 +147,13 @@
     (.toString blp-path)
     )
   )
+
+(comment
+  (doseq [n (map #(str "[ch]" %) (range 1 15))]
+    (ImageIO/write
+      (ImageIO/read (jio/file (str "D:\\IdeaProjects\\jzjh2\\resources\\" n ".png")))
+      "tga"
+      (jio/output-stream (jio/file (str "D:\\IdeaProjects\\jzjh2\\resources\\" n ".tga")))
+      ))
+
+  )

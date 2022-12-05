@@ -60,8 +60,8 @@
   ;; 读取lni文件
   (let [chunk (read-chunk lni-file)]
     (-> chunk
-         (update-vals read-chunk-body)
-         )))
+        (update-vals read-chunk-body)
+        )))
 
 (comment
   (def chunks (read-chunk "D:\\IdeaProjects\\jztd-reborn\\jztd\\table\\ability.ini"))
@@ -69,4 +69,13 @@
   (read-chunk-body (get chunks "Aetl"))
   (-> (read-lni "D:\\IdeaProjects\\jztd-reborn\\jztd\\table\\ability.ini")
       (update-vals #(get % "Name")))
+
+  (->> (read-lni "D:\\IdeaProjects\\jzjh-reborn\\jzjh\\table\\doodad.ini")
+       (map val)
+       (map #(get % "file"))
+       (filter identity)
+       (map #(read-string %))
+       (distinct)
+       (sort))
+
   )

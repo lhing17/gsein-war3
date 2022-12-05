@@ -1,7 +1,8 @@
 (ns gsein-war3.lni.available-id
   (:require [clojure.string :as str]
             [clojure.java.io :as jio]
-            [gsein-war3.config :as config]))
+            [gsein-war3.config :as config]
+            [selmer.parser :as sp]))
 
 
 (def env (config/get-config))
@@ -63,6 +64,7 @@
                     :unit "e000"
                     :hero "E000"
                     :buff "B000"
+                    :doodad "D000"
                     "A000")]
      (get-available-ids n id-producer type start-id)
      )))

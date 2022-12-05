@@ -132,7 +132,14 @@
 
 (comment
   (generate-title! "领取福利" Color/BLUE (jio/file (jio/resource "images/background/3.png")) (:out-dir env))
-  (generate-title-with-image! "D:/IdeaProjects/JZJH/resources/头顶称号/绝世内功.png" "jueshineigong" (:out-dir env))
+  (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/主线历练.png" "ch_zhuxian" "D:/IdeaProjects/jzjh2/out")
+  (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/场景传送.png" "ch_changjing" "D:/IdeaProjects/jzjh2/out")
+  (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/副本传送.png" "ch_fuben" "D:/IdeaProjects/jzjh2/out")
+  (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/古董商人.png" "ch_gudong" "D:/IdeaProjects/jzjh2/out")
+  (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/任务传送.png" "ch_renwu" "D:/IdeaProjects/jzjh2/out")
+  (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/声望兑换.png" "ch_shengwang" "D:/IdeaProjects/jzjh2/out")
+  (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/选择副职.png" "ch_fuzhi" "D:/IdeaProjects/jzjh2/out")
+  (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/装备商人.png" "ch_zhuangbei" "D:/IdeaProjects/jzjh2/out")
 
 (doseq [file (file-seq (jio/file "D:\\IdeaProjects\\JZJH\\resources\\头顶称号\\png"))]
   (when (.isFile file)
