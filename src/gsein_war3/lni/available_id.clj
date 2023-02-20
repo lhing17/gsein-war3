@@ -2,7 +2,9 @@
   (:require [clojure.string :as str]
             [clojure.java.io :as jio]
             [gsein-war3.config :as config]
-            [selmer.parser :as sp]))
+            [gsein-war3.xls.reader :as xls-reader]
+            [selmer.parser :as sp]
+            [gsein-war3.util.pinyin :as pinyin]))
 
 
 (def env (config/get-config))

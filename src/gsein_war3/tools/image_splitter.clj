@@ -67,7 +67,7 @@
         (ImageIO/write part format out)))))
 
 (comment
-  (def img (javax.imageio.ImageIO/read (java.io.File. "D:\\IdeaProjects\\JZJH\\resources\\决战江湖1.6.60.png")))
+  (def img (javax.imageio.ImageIO/read (java.io.File. "D:\\IdeaProjects\\JZJH\\resources\\td_loading.png")))
   (def splitter (fn [rect]
                   (->> [rect]
                        (mapcat #(split-rectangle % :horizontal 512))
@@ -78,7 +78,10 @@
     (javax.imageio.ImageIO/write (second part) "png" (java.io.File. (str (first part) ".png"))))
 
   (write-image my-image "" ["LoadingScreenTL" "LoadingScreenBL" "LoadingScreenTR" "LoadingScreenBR"] "blp")
-  (write-image (make-image [(scale img 512 512)]) "" ["war3mapPreview"] "tga"),)
+  (write-image (make-image [(scale img 512 512)]) "" ["war3mapPreview"] "tga")
+  (write-image (make-image [(scale img 1000 500)]) "" ["war3mapPreview3"] "png")
+
+  ,)
 
 
 

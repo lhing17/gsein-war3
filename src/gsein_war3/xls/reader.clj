@@ -39,4 +39,28 @@
                    :AB :other2
                    })
   (xls->map xls-file sheet column-map)
+
+
+  (def xls-file "D:\\IdeaProjects\\jztd-reborn\\doc\\决战TD数值.xlsx")
+  (def column-map {:A :number
+                   :B :name
+                   :C :level
+                   :D :color
+                   :E :total-name
+                   :F :total-attr
+                   :G :denomination
+                   :H :dmg
+                   :I :attack-speed
+                   :J :range
+                   :K :primary
+                   :L :str
+                   :M :agi
+                   :N :int
+                   :O :ability-1
+                   :P :ability-2
+                   :Q :denom-ability
+                   :R :damage-formula
+                   })
+
+  (xls->map xls-file "英雄塔" column-map)
   )

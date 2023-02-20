@@ -10,24 +10,12 @@
 
 (def env (config/get-config))
 
-(def tower-ids ["o000" "o00B" "o001" "o00C" "o00D" "n000" "n011" "n017" "n001" "n012" "n00Y"
-                "n00Y" "n014" "n014" "n00Z" "n00Z" "n015" "n015" "n010" "n013" "n002" "n002"
-                "n016" "n016" "o002" "o002" "o002" "O003" "O003" "h001" "h00B" "h00F" "h00G"
-                "h00C" "h00H" "n007" "n018" "n018" "n019" "n019" "n008" "n01A" "n01A" "n01B"
-                "n01B" "n01C" "n01D" "n01E" "n01E" "n01F" "n01G" "n01H" "n01H" "n01K" "n01I"
-                "n01J" "n01J" "n01L" "n01M" "n01N" "n01N" "n01N" "n01O" "n01O" "n01O" "H004"
-                "H004" "H004" "e000" "e000" "e00A" "e00A" "e00B" "e00B" "e001" "e001" "e00D"
-                "e00D" "e00C" "e00C" "n003" "n003" "n01Q" "n01Q" "n01R" "n01R" "n01S" "n01S"
-                "n01T" "n01T" "n01U" "n01U" "n01V" "n01V" "n01W" "n01W" "n01X" "n01X" "n01Y"
-                "n01Y" "n01Z" "n01Z" "n020" "n020" "n021" "n021" "n022" "n022" "n023" "n023"
-                "n024" "n024" "n025" "n025" "n026" "n026" "n027" "n027" "n027" "H000" "H000"
-                "H000" "n00A" "n028" "n029" "n02A" "n02B" "n02C" "n02D" "n02E" "n00C" "n02F"
-                "n02G" "n00B" "n00B" "n02H" "n02H" "n02I" "n02I" "n02J" "n02J" "n02K" "n02K"
-                "n02L" "n02L" "n02M" "n02M" "n00E" "n00E" "n02N" "n02N" "n02O" "n02O" "n02P"
-                "n02Q" "n02Q" "n02R" "n02R" "n02S" "n02S" "n02S" "N00G" "N00G" "N00G" "N00G"
-                "h00O" "h00P" "h00Q" "h00R" "h00S" "h00T" "h00U" "h00V" "h00V" "h00W" "h00W"
-                "h00X" "h00X" "h00Y" "h00Z" "h010" "h011" "h011" "h012" "h013" "h014" "h015"
-                "h015" "H017" "H017" "H017" "o00U" "o00T" "o00V" "o00W" "O00X"])
+(def tower-ids ["O100" "O101" "O102" "O103" "O104" "O105" "O106" "O107" "O108" "O109"
+                "O10A" "O10B" "O10C" "O10D" "O10E" "O10F" "O10G" "O10H" "O10I" "O10J"
+                "O10K" "O10L" "O10M" "O10N" "O10O" "O10P" "O10Q" "O10R" "O10S" "O10T"
+                "O10U" "O10V" "O10W" "O10X" "O10Y" "O10Z" "O110" "O111" "O112" "O113"
+                "O114" "O115" "O116" "O117" "O118" "O119" "O11A" "O11B" "O11C" "O11D"
+                "O11E" "O11F" "O11G" "O11H" "O11I" "O11J" "O11K" "O11L"])
 
 (defn- get-tower [lni-map id]
   (let [tower (get lni-map id)]
@@ -39,14 +27,14 @@
        (map #(get-tower lni-map %))))
 
 (defn generate-tower-building-ability [towers project-dir]
-  (let [aids (aid/get-available-ids (count towers) (aid/project-id-producer project-dir) :ability "A000")
+  (let [aids (aid/get-available-ids (count towers) (aid/project-id-producer project-dir) :ability "A100")
         abilities (map (fn [id tower] {:id id :unit-id (:id tower) :name (subs (:name tower) 1 (dec (count (:name tower))))}) aids towers)]
     (->> abilities
          (map #(sp/render-file (jio/resource "templates/造塔技能.ini") %))
          (str/join "\n"))))
 
 (defn generate-tower-building-item [abilities project-dir]
-  (let [aids (aid/get-available-ids (count abilities) (aid/project-id-producer project-dir) :item "I000")
+  (let [aids (aid/get-available-ids (count abilities) (aid/project-id-producer project-dir) :item "I100")
         items (map (fn [id ability] {:id id :ability-id (:id ability) :name (:name ability) :art (:art ability)}) aids abilities)]
     (->> items
          (map #(sp/render-file (jio/resource "templates/造塔物品.ini") %))
@@ -62,7 +50,7 @@
   (->> (generate-tower-building-ability towers "D:\\IdeaProjects\\jztd-reborn\\jztd")
        (spit "a.ini"))
 
-  (def aids (aid/get-available-ids (count towers) (aid/project-id-producer "D:\\IdeaProjects\\jztd-reborn\\jztd") :ability "A000"))
+  (def aids (aid/get-available-ids (count towers) (aid/project-id-producer "D:\\IdeaProjects\\jztd-reborn\\jztd") :ability "A100"))
   (def abilities (map (fn [id tower] {:id id :unit-id (:id tower) :name (subs (:name tower) 1 (dec (count (:name tower))))}) aids towers))
 
   (def abilities-with-art

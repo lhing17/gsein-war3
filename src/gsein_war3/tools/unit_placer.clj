@@ -1,4 +1,5 @@
-(ns gsein-war3.tools.unit-placer
+
+  (ns gsein-war3.tools.unit-placer
   (:require [clojure.string :as str]))
 
 (defn unit-placer [center-x center-y dist cnt]
@@ -10,12 +11,13 @@
                 (mod (+ 180 (* i (/ 360 cnt))) 360)])))
        (map (fn [[x y angle]]
              (let [x (Math/round x)
-                   y (Math/round y)]
+                   y (Math/round y)
+                   angle (Math/round (double angle))]
                (str/join ", " [x y angle]))))))
 
 
 (comment
-  (unit-placer 1700 -4100 300 9)
+  (unit-placer 1700 -4100 300 11)
 
   ,)
 

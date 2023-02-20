@@ -141,6 +141,18 @@
   (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/选择副职.png" "ch_fuzhi" "D:/IdeaProjects/jzjh2/out")
   (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/装备商人.png" "ch_zhuangbei" "D:/IdeaProjects/jzjh2/out")
 
+
+  (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/新建文件夹/购买武器.png" "ch_wuqi" "D:/IdeaProjects/jzjh2/out")
+  (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/新建文件夹/精英挑战.png" "ch_tiaozhan" "D:/IdeaProjects/jzjh2/out")
+  (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/新建文件夹/科技升级.png" "ch_keji" "D:/IdeaProjects/jzjh2/out")
+  (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/新建文件夹/幸运抽取.png" "ch_chouqu" "D:/IdeaProjects/jzjh2/out")
+  (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/新建文件夹/招募侠士.png" "ch_zhaomu" "D:/IdeaProjects/jzjh2/out")
+
+  (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/新建文件夹/购买丹药.png" "ch_danyao" "D:/IdeaProjects/jzjh2/out")
+  (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/新建文件夹/绝世武功.png" "ch_wugong" "D:/IdeaProjects/jzjh2/out")
+  (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/新建文件夹/领取福利.png" "ch_fuli" "D:/IdeaProjects/jzjh2/out")
+  (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/新建文件夹/武器熔炼.png" "ch_ronglian" "D:/IdeaProjects/jzjh2/out")
+
 (doseq [file (file-seq (jio/file "D:\\IdeaProjects\\JZJH\\resources\\头顶称号\\png"))]
   (when (.isFile file)
     (generate-title-with-image! (.getAbsolutePath file) (get-file-pinyin-name-without-extension file) (:out-dir env))))

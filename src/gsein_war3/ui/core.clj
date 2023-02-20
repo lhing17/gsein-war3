@@ -1,7 +1,9 @@
 (ns gsein-war3.ui.core
   (:require [seesaw.core :refer :all]
             [seesaw.mig :refer :all]
-            [seesaw.chooser :refer :all])
+            [seesaw.chooser :refer :all]
+            [seesaw.color :refer :all]
+            )
   (:import (com.formdev.flatlaf FlatLightLaf)))
 
 (defn make-button
@@ -50,6 +52,31 @@
       pack!
       show!))
 
+;; 一个简易的文本生成器，可以填写文字，可以选择文字的颜色，可以根据换行自动生成换行符
+(defn text-generator-content []
+  (let [input-area (text :text "Hello World"
+                        :multi-line? true
+                        :rows 10)
+        color-chooser (choose-color :color (color :red)
+                                     :listen [:action #(alert % "color-chooser")])
+        ]
+    (mig-panel :constraints ["", "[right]"]
+               :items [
+                       [input-area "width 200!, gap 10"]
+                       ;[(color-chooser) "gap 10, wrap"]
+                       ])))
+
+(defn create-generator-frame []
+  (-> (frame {:title    "gsein-war3"
+              :size     [800 :by 600]
+              :content  (text-generator-content)
+              :on-close :exit})
+      pack!
+      show!))
+
+
+
+
 (defn -main []
   (FlatLightLaf/setup)
   (let [f (create-frame)
@@ -61,5 +88,6 @@
   (FlatLightLaf/setup)
   (def f (create-frame)),
 
+  (def g (create-generator-frame))
 
   )

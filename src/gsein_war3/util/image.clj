@@ -156,4 +156,17 @@
       (jio/output-stream (jio/file (str "D:\\IdeaProjects\\jzjh2\\resources\\" n ".tga")))
       ))
 
+  (ImageIO/write
+    (ImageIO/read (jio/file "D:\\IdeaProjects\\jzjh2\\resources\\已兑换.png"))
+    "tga"
+    (jio/output-stream (jio/file "D:\\IdeaProjects\\jzjh2\\resources\\exchanged.tga"))
+
+    )
+  (ImageIO/write
+    (ImageIO/read (jio/file "D:\\IdeaProjects\\JZJH\\resources\\RightArrow.png"))
+    "tga"
+    (jio/output-stream (jio/file "D:\\IdeaProjects\\JZJH\\resources\\RightArrow.tga"))
+
+    )
+
   )
