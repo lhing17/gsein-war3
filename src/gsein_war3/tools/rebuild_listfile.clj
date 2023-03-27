@@ -6,10 +6,10 @@
 ;; 重建listfile文件
 
 (comment
-  (->> (file-seq (jio/file "E:\\War3Map\\拆地图\\命运之轮\\命运之轮"))
+  (->> (file-seq (jio/file "E:\\War3Map\\拆地图\\剑开天门\\剑开"))
        (filter #(.isFile %))
        (map #(.toPath %))
-       (map #(.relativize (Paths/get "E:\\War3Map\\拆地图\\命运之轮\\命运之轮" (into-array String [])) %))
+       (map #(.relativize (Paths/get "E:\\War3Map\\拆地图\\剑开天门\\剑开" (into-array String [])) %))
        (str/join "\n")
        (spit "(listfile)"))
 

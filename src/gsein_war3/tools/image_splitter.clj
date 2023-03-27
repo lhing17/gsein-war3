@@ -67,7 +67,7 @@
         (ImageIO/write part format out)))))
 
 (comment
-  (def img (javax.imageio.ImageIO/read (java.io.File. "D:\\IdeaProjects\\JZJH\\resources\\td_loading.png")))
+  (def img (javax.imageio.ImageIO/read (java.io.File. "D:\\IdeaProjects\\JZJH\\resources\\决战江湖1.7.png")))
   (def splitter (fn [rect]
                   (->> [rect]
                        (mapcat #(split-rectangle % :horizontal 512))

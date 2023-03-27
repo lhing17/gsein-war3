@@ -22,7 +22,9 @@
    "分类mdx文件"
    (let [mdx-files (get-mdx-files root)
          filtered-mdx-files (filterv mdx-filter mdx-files)]
+     (println "mdx files:" (count mdx-files))
      (doseq [mdx-file filtered-mdx-files]
+       (println (.getName mdx-file))
        (let [file-name (.getName mdx-file)
              out-mdx-file (jio/file out-dir (str/replace file-name ".mdx" "") file-name)
              blp-files (filter (complement str/blank?) (parser/parse mdx-file))
@@ -32,8 +34,9 @@
 
          (try (FileUtils/copyFile mdx-file out-mdx-file)
               (doseq [[blp-file out-blp-file] (map list source-blp-files out-blp-files)]
+                ;(println (.getName mdx-file) (.getAbsolutePath blp-file))
                 (when (.exists blp-file)
-                  ;(println (.getName mdx-file) (.getName blp-file))
+
                   (FileUtils/copyFile blp-file out-blp-file)))
               (catch Exception e (.printStackTrace e)))
          (when (not= mode :copy)
@@ -55,8 +58,31 @@
 
 (comment
   (def mdx-files (get-mdx-files (jio/file "D:\\IdeaProjects\\jzjh-reborn\\jzjh\\resource")))
-  (classify (jio/file "E:\\War3Map\\拆地图\\命运之轮\\命运之轮")
-            (jio/file "E:\\War3Map\\拆地图\\命运之轮\\out"))
+  (classify (jio/file "E:\\War3Map\\拆地图\\英灵传说\\yingling")
+            (jio/file "E:\\War3Map\\拆地图\\英灵传说\\out"))
+
+  (classify (jio/file "E:\\War3Map\\无限群工具\\模型\\◆请解压我\\高清补丁在这里，请先阅读使用说明\\War3Patch")
+            (jio/file "E:\\War3Map\\无限群工具\\模型\\out"))
+
+  (classify (jio/file "E:\\War3Map\\模型\\resource_library")
+            (jio/file "E:\\War3Map\\模型\\resource_library\\out"))
+
+  (classify (jio/file "D:\\IdeaProjects\\jzjh-reborn\\jzjh\\resource")
+            (jio/file "D:\\IdeaProjects\\jzjh-reborn\\out"))
+
+
+  (classify (jio/file "E:\\War3Map\\拆地图\\模型特效\\[精品特效]200个打包演示图")
+            (jio/file "E:\\War3Map\\拆地图\\模型特效\\out"))
+
+
+
+
+
+
+  (->> (get-mdx-files (jio/file "E:\\War3Map\\无限群工具\\模型\\◆请解压我\\高清补丁在这里，请先阅读使用说明\\War3Patch"))
+       (count))
+
+
   (doseq [mdx-file mdx-files]
     (println mdx-file)
     (println (parser/parse mdx-file))

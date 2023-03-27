@@ -169,4 +169,17 @@
 
     )
 
+  (ImageIO/write
+    (ImageIO/read (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\shenghua_hover.png"))
+    "tga"
+    (jio/output-stream (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\shenghua_hover.tga"))
+    )
+
+  (ImageIO/write
+    (ImageIO/read (jio/file "E:\\War3Map\\拆地图\\剑开天门\\剑开\\ui\\widgets\\tooltips\\human\\human-tooltip-background.blp"))
+    "png"
+    (jio/output-stream (jio/file "E:\\War3Map\\拆地图\\剑开天门\\剑开\\ui\\widgets\\tooltips\\human\\human-tooltip-background.png"))
+
+    )
+
   )

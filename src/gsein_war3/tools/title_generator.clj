@@ -141,6 +141,14 @@
   (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/选择副职.png" "ch_fuzhi" "D:/IdeaProjects/jzjh2/out")
   (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/装备商人.png" "ch_zhuangbei" "D:/IdeaProjects/jzjh2/out")
 
+  (generate-title-with-image! "D:\\IdeaProjects\\europe\\resources\\头顶称号\\主线任务.png" "ch_zhuxian" "D:/IdeaProjects/europe/out")
+  (generate-title-with-image! "D:\\IdeaProjects\\europe\\resources\\头顶称号\\吃货一枚.png" "ch_chihuo" "D:/IdeaProjects/europe/out")
+  (generate-title-with-image! "D:\\IdeaProjects\\europe\\resources\\头顶称号\\打铁汉子.png" "ch_datie" "D:/IdeaProjects/europe/out")
+  (generate-title-with-image! "D:\\IdeaProjects\\europe\\resources\\头顶称号\\酒水饮料.png" "ch_jiushui" "D:/IdeaProjects/europe/out")
+  (generate-title-with-image! "D:\\IdeaProjects\\europe\\resources\\头顶称号\\流浪青年.png" "ch_liulang" "D:/IdeaProjects/europe/out")
+  (generate-title-with-image! "D:\\IdeaProjects\\europe\\resources\\头顶称号\\无奸不商.png" "ch_jianshang" "D:/IdeaProjects/europe/out")
+  (generate-title-with-image! "D:\\IdeaProjects\\europe\\resources\\头顶称号\\酸菜亦菲.png" "ch_suancai" "D:/IdeaProjects/jzjh-reborn/out")
+
 
   (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/新建文件夹/购买武器.png" "ch_wuqi" "D:/IdeaProjects/jzjh2/out")
   (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/新建文件夹/精英挑战.png" "ch_tiaozhan" "D:/IdeaProjects/jzjh2/out")

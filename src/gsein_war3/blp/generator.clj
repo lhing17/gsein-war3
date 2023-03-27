@@ -139,8 +139,46 @@
 
   (generate-blps (java.io.File. "D:\\IdeaProjects\\jztd-reborn\\resources\\图标\\sync.png") "active")
 
-  (doseq [file (file-seq (jio/file "D:\\tmp\\out"))]
+  (doseq [file (file-seq (jio/file "D:\\IdeaProjects\\europe\\resources\\图标\\装备"))]
     (when (.isFile file)
-      (generate-blps file "passive")))
+      (generate-blps file "active")))
 
-  (generate-blps (jio/file "/Users/lianghao/IdeaProjects/JZJH/resources/门派图标/jpg/嵩山.jpg") "active"),)
+
+  (doseq [file (file-seq (jio/file "D:\\IdeaProjects\\jzjh-reborn\\resources\\美食"))]
+    (when (.isFile file)
+      (generate-blps file "active")))
+
+
+
+  (generate-blps (jio/file "D:\\IdeaProjects\\europe\\resources\\图标\\药水\\智力药水.png") "active")
+  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\高级抽卡.png") "active")
+  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\购买人口.png") "active")
+  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\解锁抽卡.png") "active")
+  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\金币.png") "active")
+  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\木材.png") "active")
+  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\中级抽卡.png") "active")
+
+
+  (generate-blps (jio/file "D:\\IdeaProjects\\jzjh-reborn\\resources\\美食\\黑暗料理.png") "active")
+  (generate-blps (jio/file "D:\\IdeaProjects\\jzjh-reborn\\resources\\美食\\烹饪.png") "active")
+
+
+  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\图标\\完成\\合成.png") "active")
+  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\图标\\完成\\升级.png") "active")
+
+  (generate-blps (jio/file "D:\\IdeaProjects\\jzjh-reborn\\resources\\食材\\酱.png") "passive")
+
+  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\苗人凤.png") "active")
+  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\温青.png") "active")
+  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\河马.png") "active")
+  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\赤龙.png") "active")
+  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\紫罗兰.png") "active")
+  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\蓝色.png") "active")
+  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\雪影.png") "passive")
+  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\龙威.png") "passive")
+
+  (generate-blps (jio/file "D:\\IdeaProjects\\europe\\resources\\图标\\技能\\升级.png") "active")
+
+
+  )
+

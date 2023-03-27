@@ -1,7 +1,9 @@
 (ns gsein-war3.lni.writer
   (:require
+    [clojure.string :as str]
     [gsein-war3.lni.available-id :as aid]
-    [gsein-war3.lni.reader :as reader]))
+    [gsein-war3.lni.reader :as reader]
+    [gsein-war3.util.pinyin :as pinyin]))
 
 (defn- write-chunk-body [chunk-body]
   ;; 将chunk的body写入文件
@@ -53,6 +55,35 @@
          (update-vals (select-keys lni mobs) #(update-hp % (fn [hp] (str (int (* 0.7 (Integer/parseInt hp))))))))
   (write-lni "test.ini" (merge lni
                                (update-vals (select-keys lni mobs) #(update-hp % (fn [hp] (str (int (* 0.7 (Integer/parseInt hp)))))))))
+
+  ; -------- 分界线 --------
+  ; 批量更新装备图标 I037 - I04K
+  (def equips (->> (iterate aid/next-id "I037")
+                   (take-while #(not= % "I04L"))))
+
+  (def lni (reader/read-lni "D:\\IdeaProjects\\europe\\europe\\table\\item.ini"))
+
+  ; 将形如"|cFF871F78【史诗】红宝石项链|r\"替换为"红宝石项链"
+  (defn get-real-name [n]
+    (let [regex #"\"(\|c[0-9A-Fa-f]{8})?【.*】(.*)(\|r)?\""]
+      (if (re-matches regex n)
+        (str/replace (nth (re-find regex n) 2) "|r" "")
+        n)))
+  (get-real-name "\"|cFF871F78【史诗】红宝石项链|r\"")
+  (get-real-name "\"【普通】红宝石项链\"")
+
+
+
+  (write-lni "test.ini" (merge lni
+                               (update-vals (select-keys lni equips)
+                                            #(assoc % "abilList" "\"\""))))
+
+
+
+
+
+  ; -------- 分界线 --------
+
 
   (def towers [
                "o000" "o00B" "o001" "o00C" "o00D" "n000" "n011" "n017" "n001" "n012"

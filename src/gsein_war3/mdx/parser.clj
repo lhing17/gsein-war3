@@ -67,8 +67,9 @@
   "解析mdx文件结构，返回blp路径列表"
   (let [raf (RandomAccessFile. file, "r")
         kw (mdx-keyword raf)]
-    (when-not (= "MDLX" kw)
-      (throw (IllegalStateException. "Not a mdx model")))
+    ;(when-not (= "MDLX" kw)
+    ;  (throw (IllegalStateException. "Not a mdx model"))
+    ;  )
     (try
       (parse-content raf)
       (catch Exception _ "")
@@ -80,4 +81,5 @@
   (def filename "D:\\IdeaProjects\\jzjh-reborn\\jzjh\\resource\\4b3.mdx")
   (def raf (RandomAccessFile. filename, "r"))
   (mdx-keyword raf)
-  (parse filename),)
+  (parse filename)
+  ,)
