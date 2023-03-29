@@ -1,7 +1,9 @@
 (ns gsein-war3.tools.constant-replacer
   (:require
     [clojure.java.io :as jio]
-    [clojure.string :as str]))
+    [clojure.string :as str]
+    [gsein-war3.lni.reader :as reader]
+    [gsein-war3.util.pinyin :as pinyin]))
 
 ; 判断某个字符串除空格外是否以constant开头
 (defn- starts-with-constant [s]
@@ -9,7 +11,7 @@
 
 ; 获取某个字符串中的常量名和值
 (defn- get-constant-name-and-value [s]
-  (let [constant-pattern #"\s*constant\s+integer\s+(\w+)\s*=\s*(\'[A-Za-z0-9]{4}\')"]
+  (let [constant-pattern #"\s*constant\s+integer\s+(\w+)\s*=\s*(\'[A-Za-z0-9]{4}\').*"]
     (when-let [[_ name value] (re-matches constant-pattern s)]
       [name value])))
 
@@ -45,14 +47,29 @@
   (literal-counter "constant integer RED_BIRD= 'n01I'" {})
   )
 
+; 一个字符串只保留汉字
+(defn- keep-chinese [s]
+  (->> (str/split s #"")
+       (map #(.charAt % 0))
+       (filter #(< 19968 (int %) 40869))
+       (str/join "")))
+
+; 将汉字字符串转为大写字母以下划线分隔的拼音
+(defn- to-pinyin [s]
+  (->> (str/split s #"")
+       (map pinyin/get-pinyin-name)
+       (map #(.toUpperCase %))
+       (str/join "_")))
+
+
 (comment
-  (def constants (read-constants "/Users/lianghao/IdeaProjects/jzjh-reborn/jzjh/map/war3map.j"))
+  (def constants (read-constants "D:/IdeaProjects/jzjh-reborn/jzjh/map/war3map.j"))
   (count constants)
   (def reverse-constant-map (into {} (map (fn [[k v]] [v k]) constants)))
 
   (replace-literal-with-constant "constant integer RED_BIRD= 'n01I'" reverse-constant-map)
 
-  (def jass-files (->> (file-seq (jio/file "/Users/lianghao/IdeaProjects/jzjh-reborn/jass"))
+  (def jass-files (->> (file-seq (jio/file "D:/IdeaProjects/jzjh-reborn/jass"))
                        (filter #(.isFile %))
                        (map #(.getAbsolutePath %))
                        (filter #(str/ends-with? % ".j"))))
@@ -74,11 +91,30 @@
                         (reduce (fn [m s]
                                   (literal-counter s m)) {})
                         ))
-  (->> literal-map
-       (filter (fn [[k v]] (> v 10)))
-       (filter (fn [[k v]] (or (= "A" (subs k 1 2)) (= "I" (subs k 1 2)))))
-       (sort-by val)
-       (reverse)
-       (count)
+  (def literals (->> literal-map
+                     (filter (fn [[k v]] (> v 1)))
+                     (filter (fn [[k v]] (or (= "O" (subs k 1 2)) (= "H" (subs k 1 2)))))
+                     (sort-by key)
+                     (map first)
+                     (map #(subs % 1 (- (count %) 1)))
+                     ))
+
+  (def ability-map (-> (reader/read-lni "D:\\IdeaProjects\\jzjh-reborn\\jzjh\\table\\ability.ini")
+                       (update-vals #(get % "Name"))))
+  (def item-map (-> (reader/read-lni "D:\\IdeaProjects\\jzjh-reborn\\jzjh\\table\\item.ini")
+                    (update-vals #(get % "Name"))))
+
+  (def unit-map (-> (reader/read-lni "D:\\IdeaProjects\\jzjh-reborn\\jzjh\\table\\unit.ini")
+                    (update-vals #(get % "Name"))))
+
+  (->> (select-keys (merge ability-map item-map unit-map) literals)
+       (filter (fn [[k v]] (not (nil? v))))
+       (sort-by key)
+        (map (fn [[k v]] (str "constant integer "
+                              (if (str/starts-with? k "I") "ITEM_" "")
+                              (to-pinyin (keep-chinese v))
+                              " = '" k "' //" (keep-chinese v))))
+        (str/join "\n")
        )
+
   )
