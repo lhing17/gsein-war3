@@ -1,10 +1,7 @@
 (ns gsein-war3.lni.available-id
-  (:require [clojure.string :as str]
-            [clojure.java.io :as jio]
-            [gsein-war3.config :as config]
-            [gsein-war3.xls.reader :as xls-reader]
-            [selmer.parser :as sp]
-            [gsein-war3.util.pinyin :as pinyin]))
+  (:require [clojure.java.io :as jio]
+            [clojure.string :as str]
+            [gsein-war3.config :as config]))
 
 
 (def env (config/get-config))
@@ -12,8 +9,9 @@
 (defn- available? [id current-ids]
   (not-any? #(= (str/lower-case id) (str/lower-case %)) current-ids))
 
-(defn- next-char [c]
+(defn- next-char
   "计算下一个字符：9的下一个字符为A，Z的下一个字符为0"
+  [c]
   (let [i (int c)]
     (cond
       ;; 0到9
@@ -28,21 +26,24 @@
       (and (>= i 97) (<= i 121)) (char (inc i))
       (= i 122) \0)))
 
-(defn- inc-by-index [s index]
+(defn- inc-by-index
   "对下标为index的字符取next-char"
+  [s index]
   (apply str (concat (take index s)
                      (cons (next-char (nth s index))
                            (nthrest s (inc index))))))
 
-(defn next-id [id]
+(defn next-id
   "计算下一个ID"
+  [id]
   (loop [index (dec (count id)), cid (inc-by-index id index)]
     (if (= \0 (nth cid index))
       (recur (dec index) (inc-by-index cid (dec index)))
       cid)))
 
-(defn project-id-producer [project-dir]
+(defn project-id-producer
   "获取某类型当前所有的ID"
+  [project-dir]
   (fn [type]
     (let [real-type (if (= type :hero) :unit type)
           object-path (str "table/" (name real-type) ".ini")]
@@ -52,9 +53,10 @@
              (mapv #(str/replace % #"\[|\]" "")))))))
 
 (defn get-available-ids
-
-  ([n id-producer type start-id]
-   "获取n个可用ID"
+  "获取n个可用ID"
+  (
+   [n id-producer type start-id]
+   
 
    (->> (iterate next-id start-id)
         (filter #(available? % (id-producer type)))
@@ -62,17 +64,17 @@
   ([n id-producer type]
    (let [start-id
          (case type :ability "A000"
-                    :item "I000"
-                    :unit "e000"
-                    :hero "E000"
-                    :buff "B000"
-                    :doodad "D000"
-                    "A000")]
-     (get-available-ids n id-producer type start-id)
-     )))
+               :item "I000"
+               :unit "e000"
+               :hero "E000"
+               :buff "B000"
+               :doodad "D000"
+               "A000")]
+     (get-available-ids n id-producer type start-id))))
 
-(defn get-available-id [id-producer type]
+(defn get-available-id
   "获取一个可用ID"
+  [id-producer type]
   (first (get-available-ids 1 id-producer type)))
 
 (comment
@@ -85,4 +87,5 @@
   (def project-dir (:project-dir env))
   ((project-id-producer project-dir) :ability)
   (get-available-ids 5 (project-id-producer project-dir) :item)
-  ,)
+  (get-available-id (project-id-producer project-dir) :item)
+  )

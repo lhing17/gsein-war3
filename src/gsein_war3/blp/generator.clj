@@ -39,21 +39,27 @@
 
 (defrecord blp [name dir image])
 
-(defn- command-dir [base-out-dir]
+(defn- command-dir
   "获取亮图标的路径"
+  [base-out-dir]
   (str base-out-dir "/ReplaceableTextures/CommandButtons"))
 
-(defn- command-disabled-dir [base-out-dir]
+(defn- command-disabled-dir 
   "获取暗图标的路径"
+  [base-out-dir]
   (str base-out-dir "/ReplaceableTextures/CommandButtonsDisabled"))
 
-(defn- get-dir [type base-dir]
+(defn- get-dir 
+  "根据类型获取输出目录"
+  [type base-dir]
   (case type
     :command-dir (command-dir base-dir)
     :command-disabled-dir (command-disabled-dir base-dir)
     :default base-dir))
 
-(defn image-to-blp [^BufferedImage image type base-dir name]
+(defn image-to-blp 
+  "根据图像、类型、输出目录和文件名生成内存中的BLP实例"
+  [^BufferedImage image type base-dir name]
   (let [brightness-fn (:brightness-fn (get type-config type))
         border (:border (get type-config type))
         handled-image (-> image
@@ -63,7 +69,9 @@
         dir (get-dir type base-dir)]
     (->blp name dir handled-image)))
 
-(defn output-to-file [^blp {:keys [image dir name]}]
+(defn output-to-file 
+  "将BLP实例输出到文件"
+  [^blp {:keys [image dir name]}]
   (img/output-as-blp image dir name ""))
 
 
@@ -75,36 +83,47 @@
   ,)
 
 
-(defn- output-blp [adjust-image-fn type dir-fn prefix]
+(defn- output-blp
   "获取输出blp的函数"
+   [adjust-image-fn type dir-fn prefix]
   (fn ^String [image name out-dir opts]
     (println (str "name: " name ", out-dir: " out-dir ", opts: " opts))
     (let [border (img/add-border (adjust-image-fn image) type opts)]
       (img/output-as-blp border (dir-fn out-dir) (pinyin/get-pinyin-name name) prefix))))
 
-(defn- output-blp-fn [type]
+(defn- output-blp-fn 
   "根据类型获取输出blp的函数"
+  [type]
   (case type
     :active (output-blp identity :active command-dir "BTN")
     :active-dark (output-blp #(img/adjust-brightness % -50) :passive command-disabled-dir "DISBTN")
     :passive (output-blp identity :passive command-dir "PASBTN")
     :passive-dark (output-blp #(img/adjust-brightness % -64) :passive command-disabled-dir "DISPASBTN")))
 
-(defn- get-fn-by-type [type image-name]
+(defn- get-fn-by-type 
+  "根据类型获取输出blp的函数"
+  [type image-name]
   #((output-blp-fn (keyword type)) % image-name (:temp-dir env) {:filter-type :default}))
 
-(defn get-fn-coll [type image-name]
+(defn get-fn-coll 
+  "根据类型获取输出blp的函数的集合"
+  [type image-name]
   [(get-fn-by-type type image-name)
    (get-fn-by-type (str type "-dark") image-name)])
 
-(defn map-deal-image! [image coll]
-  (map #(% image) coll))
+(defn map-deal-image! 
+  "对图像集合应用函数"
+  [image fn-coll]
+  (map #(% image) fn-coll))
 
-
-(defn- to-path [^String path]
+(defn- to-path 
+  "将字符串路径转换为Path实例"
+  [^String path]
   (Paths/get path (into-array String [])))
 
-(defn get-project-target-dir [^String path]
+(defn get-project-target-dir 
+  "根据临时目录和项目目录获取目标目录"
+  [^String path]
   (->> path
        (to-path)
        (.getParent)
@@ -112,16 +131,20 @@
        (.resolve (Paths/get (:project-dir env) (into-array ["resource"])))
        (.toFile)))
 
-(defn copy [^String path]
+(defn copy 
+  "将文件复制到目标目录"
+  [^String path]
   (when path
     (FileUtils/copyFileToDirectory (jio/file path) (get-project-target-dir path))
     (str (.relativize (to-path (:temp-dir env)) (to-path path)))))
 
 
-(defn generate-blps [^File image-file active-type]
-  (let [coll (get-fn-coll active-type (.getName image-file))
+(defn generate-blps
+  "根据图片文件和类型生成blp文件，active-type可选值为active和passive，注意此函数会生成两个64*64的BLP文件， 一个为亮图标，一个为暗图标"
+  [^File image-file active-type]
+  (let [fn-coll (get-fn-coll active-type (.getName image-file))
         image (img/resize-to-64 (ImageIO/read image-file))
-        temp-blps (map-deal-image! image coll)]
+        temp-blps (map-deal-image! image fn-coll)]
     (mapv #(copy %) temp-blps)))
 
 (comment
@@ -150,7 +173,7 @@
 
 
 
-  (generate-blps (jio/file "D:\\IdeaProjects\\europe\\resources\\图标\\药水\\智力药水.png") "active")
+  (generate-blps (jio/file "D:\\Development\\war3-dev\\photoshop\\混元.png") "active")
   (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\高级抽卡.png") "active")
   (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\购买人口.png") "active")
   (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\解锁抽卡.png") "active")
