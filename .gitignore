@@ -12,3 +12,8 @@ pom.xml.asc
 .hg/
 .idea
 *.iml
+.calva/output-window
+.calva/repl.calva-repl
+.lsp/.cache
+.clj-kondo/.cache
+blp
