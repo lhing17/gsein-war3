@@ -75,7 +75,7 @@
 (def ability-flag-const [1 2 4 8 16])
 
 (def default-values {:data-a 0 :data-b 0 :data-c 0 :data-d 0 :data-e 0
-                     :tip "" :ubertip "" :cool 0 :cost 0 :rng 0 :area 0
+                     :tip "" :ubertip "" :cool 0 :cost 0 :area 0
                      :art "" :x 0 :y 0 :name "通魔" :hotkey "A" :level 1
                      :race "orc" :rng 500})
 

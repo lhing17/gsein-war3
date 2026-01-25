@@ -2,7 +2,7 @@
 
 使用Clojure开发的吉森war3库
 
-## Usage
+## 已经支持的功能
 
 ### 1. 将png或jpg图片生成BLP格式图片
 - 使用blp/generator.clj
@@ -61,6 +61,64 @@
 (replace-blp (jio/file filename) "my/path/to/blp/" "my/new/path/to/blp/")
 ```
 
+### 6. 将jass代码中的字面量替换为指定常量
+- 使用tools/constant_replacer.clj
+- 支持将jass代码中的字面量替换为指定常量
+
+```clojure
+  
+  ;; 从war3map.j读取全部常量
+  (def constants (read-constants "my/path/to/war3map.j"))
+
+  ;; 将常量map的key-value对交换，用于替换常量为字面量
+  (def reverse-constant-map (into {} (map (fn [[k v]] [v k]) constants)))
+
+  ;; 读取地图中的所有jass文件
+  (def jass-files (->> (file-seq (jio/file "my/path/to/jass"))
+                       (filter #(.isFile %))
+                       (map #(.getAbsolutePath %))
+                       (filter #(str/ends-with? % ".j"))))
+
+  ;; 将所有jass文件中的字面量替换为指定常量
+  (doseq [jass-file jass-files]
+    (->> (jio/reader jass-file)
+         (line-seq)
+         (map (fn [s]
+                (if (starts-with-constant s)
+                  s
+                  (replace-literal-with-constant s reverse-constant-map))))
+         (str/join "\n")
+         ((fn [s] (str s "\n")))
+         (spit jass-file)))
+```
+
+### 7. 制作war3的LoadingScreen
+- 使用tools/image_splitter.clj
+- 支持将LoadingScreen.png切分成左上、左下、右上、右下四个部分
+
+```clojure
+
+;; 先准备好一张1024 * 768的png格式图片，用于制作LoadingScreen
+ (def img (javax.imageio.ImageIO/read (java.io.File. "my/path/to/LoadingScreen.png")))
+
+ ;; 定义切割函数，将图片每512像素切割一次
+  (def splitter (fn [rect]
+                  (->> [rect]
+                       (mapcat #(split-rectangle % :horizontal 512))
+                       (mapcat #(split-rectangle % :vertical 512))
+                       )))
+
+  ;; 定义切割图片实例
+  (def my-image (split-image (make-image [img]) splitter))
+  (doseq [part (map-indexed vector (:parts my-image))]
+    (javax.imageio.ImageIO/write (second part) "png" (java.io.File. (str (first part) ".png"))))
+
+  ;; 最后将切割后的图片写入blp格式，分别命名为LoadingScreenTL、LoadingScreenBL、LoadingScreenTR、LoadingScreenBR
+  (write-image my-image "" ["LoadingScreenTL" "LoadingScreenBL" "LoadingScreenTR" "LoadingScreenBR"] "blp")
+```
+
+## 计划支持的功能
+- [X] 通魔技能生成器
 
 
 ## License
