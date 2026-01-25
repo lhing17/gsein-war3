@@ -3,13 +3,11 @@
     [clojure.string :as str]
     [gsein-war3.lni.available-id :as aid]
     [gsein-war3.lni.reader :as reader]
-    [gsein-war3.util.pinyin :as pinyin]))
+))
 
 (defn- write-chunk-body [chunk-body]
   ;; 将chunk的body写入文件
-  (let [write-line (fn [line]
-                     (str line "\n"))
-        write-kv (fn [[k v]]
+  (let [ write-kv (fn [[k v]]
                    (str k " = " v "\n"))]
     (->> chunk-body
          (mapcat write-kv)

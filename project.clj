@@ -6,7 +6,7 @@
   :dependencies [
                  [nrepl "1.0.0"]
                  ;; clojure SDK
-                 [org.clojure/clojure "1.11.1"]
+                 [org.clojure/clojure "1.12.4"]
                  ;; 模板
                  [selmer "1.12.55"]
                  ;; 拼音

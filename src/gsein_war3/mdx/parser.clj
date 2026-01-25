@@ -1,9 +1,6 @@
 (ns gsein-war3.mdx.parser
   (:import (java.io RandomAccessFile EOFException)))
 
-
-
-
 (defn read-int [^RandomAccessFile raf]
   ;; 读取4个字节的整数
   (let [ch0 (.read raf)
@@ -35,8 +32,9 @@
   ;; 读取4个字节的字符串，作为关键字
   (read-str raf 4))
 
-(defn parse-textures [^RandomAccessFile raf size]
+(defn parse-textures
   "解析材质文件"
+   [^RandomAccessFile raf size]
   (let [start-pos (.getFilePointer raf)]
     (loop [rs []]
       (if (>= (.getFilePointer raf) (+ start-pos size))
@@ -49,8 +47,9 @@
                  rs))))))
 
 
-(defn- parse-content [^RandomAccessFile raf]
+(defn- parse-content
   "解析mdx文件的内容"
+   [^RandomAccessFile raf]
   (loop [kw (mdx-keyword raf) size (read-int raf) rs []]
     (cond (>= (.getFilePointer raf) (.length raf))
           rs
@@ -63,13 +62,14 @@
             (.skipBytes raf size)
             (recur (mdx-keyword raf) (read-int raf) [])))))
 
-(defn parse [file]
+(defn parse
   "解析mdx文件结构，返回blp路径列表"
+   [file]
   (let [raf (RandomAccessFile. file, "r")
         kw (mdx-keyword raf)]
-    ;(when-not (= "MDLX" kw)
-    ;  (throw (IllegalStateException. "Not a mdx model"))
-    ;  )
+    (when-not (= "MDLX" kw)
+      (throw (IllegalStateException. "Not a mdx model"))
+      )
     (try
       (parse-content raf)
       (catch Exception _ "")

@@ -1,7 +1,7 @@
 (ns gsein-war3.lni.reader
   (:require [clojure.java.io :as jio]
             [clojure.string :as str]
-            [flatland.ordered.map :refer :all]))
+            [flatland.ordered.map :as an-alias]))
 
 (defn- is-id-line [line]
   ;; 判断LNI文件中的一行是否是ID行
@@ -15,7 +15,7 @@
 
 (defn- read-chunk-body [chunk]
   ;; 读取一个chunk的body
-  (loop [result (ordered-map) k nil v "" lines chunk]
+  (loop [result (an-alias/ordered-map) k nil v "" lines chunk]
     (let [line (first lines)]
       (cond (empty? lines)
             result

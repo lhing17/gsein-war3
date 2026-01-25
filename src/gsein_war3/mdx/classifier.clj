@@ -1,6 +1,5 @@
 (ns gsein-war3.mdx.classifier
-  (:require [gsein-war3.config :as config]
-            [gsein-war3.mdx.parser :as parser]
+  (:require [gsein-war3.mdx.parser :as parser]
             [clojure.string :as str]
             [clojure.java.io :as jio]
             [gsein-war3.lni.reader :as lni-reader]
@@ -9,17 +8,16 @@
            (org.apache.commons.io FileUtils)))
 
 
-(def env (config/get-config))
-
-(defn- get-mdx-files [^File root]
+(defn- get-mdx-files 
   "获取指定文件夹下所有的mdx文件（含子文件夹下的文件）"
+  [^File root]
   (->> (file-seq root)
        (filterv #(str/ends-with? (.getName %) ".mdx"))
        ))
 
 (defn classify
-  ([^File root mdx-filter ^File out-dir mode]
    "分类mdx文件"
+  ([^File root mdx-filter ^File out-dir mode] 
    (let [mdx-files (get-mdx-files root)
          filtered-mdx-files (filterv mdx-filter mdx-files)]
      (println "mdx files:" (count mdx-files))
