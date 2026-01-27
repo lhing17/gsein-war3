@@ -1,4 +1,4 @@
-(ns gsein-war3.tools.text_searcher
+(ns gsein-war3.tools.text-searcher
   (:require [clojure.string :as str]
             [clojure.java.io :as jio]))
 

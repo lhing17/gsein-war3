@@ -1,5 +1,5 @@
 (ns gsein-war3.xls.reader
-  (:require [dk.ative.docjure.spreadsheet :refer :all]))
+  (:require [dk.ative.docjure.spreadsheet :refer [load-workbook-from-file select-columns select-sheet]]))
 
 (defn xls->map [xls-file sheet-name column-map]
   (->> (load-workbook-from-file xls-file)
@@ -36,8 +36,7 @@
                    :Y  :hp-regen
                    :Z  :mp-regen
                    :AA :other1
-                   :AB :other2
-                   })
+                   :AB :other2})
   (xls->map xls-file sheet column-map)
 
 
@@ -59,11 +58,9 @@
                    :O :ability-1
                    :P :ability-2
                    :Q :denom-ability
-                   :R :damage-formula
-                   })
+                   :R :damage-formula})
 
-  (xls->map xls-file "英雄塔" column-map)
-  )
+  (xls->map xls-file "英雄塔" column-map))
 
 ; 名称	类型	品质	品质等级	护甲	生命值	生命回复	法力值	法力回复	护甲穿透	力量	敏捷	智力	攻击	暴击率%	暴击伤害	增伤%	冷却缩减
 (def column-map
@@ -84,8 +81,7 @@
    :O  :critical-rate
    :P  :critical-times
    :Q  :damage-addition
-   :R  :cooldown-reduce
-   })
+   :R  :cooldown-reduce})
 
 (def xls-file "D:\\IdeaProjects\\europe\\doc\\数值设计.xlsx")
 (comment
@@ -101,11 +97,6 @@
          (map (fn [item] (reduce-kv (fn [s k v]
                                       (if (nil? v)
                                         s
-                                        (str s
-                                             (str (name (get title-map k)) "+" (int v) "\n")
-                                             )))
+                                        (str s (name (get title-map k)) "+" (int v) "\n")))
                                     ""
-                                    item)))
-         ))
-
-  )
+                                    item))))))

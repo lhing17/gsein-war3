@@ -1,5 +1,5 @@
 (ns gsein-war3.tools.xls-to-lni
-  (:require [dk.ative.docjure.spreadsheet :refer :all]
+  (:require [dk.ative.docjure.spreadsheet :refer [load-workbook-from-file select-columns select-sheet]]
             [selmer.parser :as sp]
             [clojure.java.io :as jio]
             [gsein-war3.lni.available-id :as aid]

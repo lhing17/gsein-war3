@@ -72,8 +72,9 @@
 
 
 
-(defn- delete-files-in-dir [^File dir]
+(defn- delete-files-in-dir 
   "删除指定目录下的所有文件"
+  [^File dir]
   (let [files (file-seq dir)]
     (doseq [file files]
       (when (and (.exists file) (.isFile file))

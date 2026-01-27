@@ -3,12 +3,9 @@
             [clojure.java.io :as jio]
             [clojure.string :as str]
             [gsein-war3.lni.available-id :as aid]
-            [gsein-war3.config :as config]
             [gsein-war3.lni.reader :as lni-reader]))
 
 (def default-art "ReplaceableTextures\\CommandButtons\\BTNChaosWarlockGreen.blp")
-
-(def env (config/get-config))
 
 (def tower-ids ["O100" "O101" "O102" "O103" "O104" "O105" "O106" "O107" "O108" "O109"
                 "O10A" "O10B" "O10C" "O10D" "O10E" "O10F" "O10G" "O10H" "O10I" "O10J"
@@ -70,22 +67,22 @@
                          ))
 
   (->> item-abilities
-       (filter (fn [[k v]] (identity v)))
-       (filter (fn [[k v]] (= 6 (count v))))
+       (filter (fn [[_ v]] (identity v)))
+       (filter (fn [[_ v]] (= 6 (count v))))
        (map (fn [[k v]] [k (subs v 1 (dec (count v)))]))
         (map (fn [[k v]] [k (get ability-unit v)]))
-       (filter (fn [[k v]] (identity v)))
+       (filter (fn [[_ v]] (identity v)))
        (map #(str "call SaveInteger(NHT, '" (second %) "', 0, '" (first %) "')"))
        (str/join "\n")
        (print)
        )
 
   (->> item-abilities
-       (filter (fn [[k v]] (identity v)))
-       (filter (fn [[k v]] (= 6 (count v))))
+       (filter (fn [[_ v]] (identity v)))
+       (filter (fn [[_ v]] (= 6 (count v))))
        (map (fn [[k v]] [k (subs v 1 (dec (count v)))]))
        (map (fn [[k v]] [k (get ability-unit v)]))
-       (filter (fn [[k v]] (identity v)))
+       (filter (fn [[_ v]] (identity v)))
        (map (fn [[k v]] [v k]))
        (into {})
        (#(map % (distinct tower-ids)))

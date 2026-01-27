@@ -49,12 +49,13 @@
     (map #(.getSubimage img (:min-x %) (:min-y %) (- (:max-x %) (:min-x %)) (- (:max-y %) (:min-y %))) rects)))
 
 (defn- scale [^BufferedImage img w h]
-  (let [scaled (.getScaledInstance img w h Image/SCALE_SMOOTH)]
-    (let [new-img (BufferedImage. w h BufferedImage/TYPE_INT_ARGB)]
-      (let [g (.createGraphics new-img)]
+  (let [scaled (.getScaledInstance img w h Image/SCALE_SMOOTH)
+        new-img (BufferedImage. w h BufferedImage/TYPE_INT_ARGB)
+        g (.createGraphics new-img)
+        ]
         (.drawImage g scaled 0 0 nil)
         (.dispose g)
-        new-img))))
+        new-img))
 
 (defn split-image [^image img splitter]
   (make-image (mapcat #(split-parts % splitter) (:parts img))))

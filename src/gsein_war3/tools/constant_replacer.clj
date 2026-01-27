@@ -92,8 +92,8 @@
                                   (literal-counter s m)) {})
                         ))
   (def literals (->> literal-map
-                     (filter (fn [[k v]] (> v 1)))
-                     (filter (fn [[k v]] (or (= "O" (subs k 1 2)) (= "H" (subs k 1 2)))))
+                     (filter (fn [[_ v]] (> v 1)))
+                     (filter (fn [[k _]] (or (= "O" (subs k 1 2)) (= "H" (subs k 1 2)))))
                      (sort-by key)
                      (map first)
                      (map #(subs % 1 (- (count %) 1)))
@@ -108,7 +108,7 @@
                     (update-vals #(get % "Name"))))
 
   (->> (select-keys (merge ability-map item-map unit-map) literals)
-       (filter (fn [[k v]] (not (nil? v))))
+       (filter (fn [[_ v]] (not (nil? v))))
        (sort-by key)
         (map (fn [[k v]] (str "constant integer "
                               (if (str/starts-with? k "I") "ITEM_" "")

@@ -1,8 +1,6 @@
 (ns gsein-war3.ui.core
-  (:require [seesaw.core :refer :all]
-            [seesaw.mig :refer :all]
-            [seesaw.chooser :refer :all]
-            [seesaw.color :refer :all]
+  (:require [seesaw.core :refer [alert button frame pack! show! text]]
+            [seesaw.mig :refer [mig-panel]]
             )
   (:import (com.formdev.flatlaf FlatLightLaf)))
 
@@ -57,8 +55,6 @@
   (let [input-area (text :text "Hello World"
                         :multi-line? true
                         :rows 10)
-        color-chooser (choose-color :color (color :red)
-                                     :listen [:action #(alert % "color-chooser")])
         ]
     (mig-panel :constraints ["", "[right]"]
                :items [
@@ -79,7 +75,7 @@
 
 (defn -main []
   (FlatLightLaf/setup)
-  (let [f (create-frame)
+  (let [_ (create-frame)
         ])
 
   )
