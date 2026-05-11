@@ -12,8 +12,7 @@
                  ;; 拼音
                  [com.belerweb/pinyin4j "2.5.1"]
                  ;; 可以动态加载依赖包
-                 [clj-commons/pomegranate "1.2.1"]
-                 ;; 数据可视化
+                 [clj-commons/pomegranate "1.2.1"]                 ;; 数据可视化
                  [vlaaad/reveal "1.3.276"]
                  ;; apache commons io
                  [commons-io "2.11.0"]
@@ -25,12 +24,8 @@
                  [org.flatland/ordered "1.15.10"]
                  ;; 支持tga格式
                  [com.twelvemonkeys.imageio/imageio-tga "3.8.3"]
-                 ;; UI
-                 [seesaw "1.5.0"]
-                 ;; https://mvnrepository.com/artifact/com.formdev/flatlaf
-                 [com.formdev/flatlaf "2.5"]
-
-                 [http-kit "2.7.0-alpha1"]
+                 ;; CLI
+                 [org.clojure/tools.cli "1.1.230"]
                  ]
   :repositories [["jitpack" "https://jitpack.io"]]
   :repl-options {:init-ns gsein-war3.core

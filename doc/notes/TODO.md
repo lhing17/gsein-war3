@@ -7,11 +7,11 @@
 ## 阶段 1：Clojure 工程化改造（规范化 CLI 接口）
 
 ### 1.1 清理与构建配置
-- [ ] `project.clj`：移除 `seesaw`、`flatlaf`、`http-kit`、`pomegranate`
-- [ ] `project.clj`：新增依赖 `org.clojure/tools.cli`
-- [ ] 删除 `src/gsein_war3/ui/core.clj`（Swing UI）
-- [ ] 删除 `src/gsein_war3/http/server.clj`（http-kit demo）
-- [ ] `lein uberjar` 验证构建成功
+- [x] `project.clj`：移除 `seesaw`、`flatlaf`、`http-kit`、`pomegranate`
+- [x] `project.clj`：新增依赖 `org.clojure/tools.cli`
+- [x] 删除 `src/gsein_war3/ui/core.clj`（Swing UI）
+- [x] 删除 `src/gsein_war3/http/server.clj`（http-kit demo）
+- [x] `lein uberjar` 验证构建成功
 
 ### 1.2 解耦全局硬编码配置
 - [ ] `src/gsein_war3/config.clj`：移除所有命名空间顶层的 `(def env (config/get-config))`
