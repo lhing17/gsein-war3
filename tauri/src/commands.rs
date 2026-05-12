@@ -11,6 +11,13 @@ pub struct ClojureResult {
     pub stderr: String,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct JavaCheckResult {
+    pub installed: bool,
+    pub version: Option<String>,
+    pub error: Option<String>,
+}
+
 #[tauri::command]
 pub async fn call_clojure(app: tauri::AppHandle, cmd: String, args: Vec<String>) -> Result<ClojureResult, String> {
     let jar_path = if let Ok(resource_dir) = app.path().resource_dir() {
@@ -56,4 +63,37 @@ pub async fn get_config() -> Result<AppConfig, String> {
 #[tauri::command]
 pub async fn set_config(config: AppConfig) -> Result<(), String> {
     save_config(&config).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub async fn check_java() -> Result<JavaCheckResult, String> {
+    let output = Command::new("java")
+        .arg("-version")
+        .output();
+
+    match output {
+        Ok(out) => {
+            let stderr = String::from_utf8_lossy(&out.stderr);
+            // java -version writes to stderr
+            let version_line = stderr.lines().next().unwrap_or("");
+            let version = if version_line.contains("version") {
+                version_line.split("\"").nth(1).map(|s| s.to_string())
+            } else {
+                None
+            };
+
+            Ok(JavaCheckResult {
+                installed: true,
+                version,
+                error: None,
+            })
+        }
+        Err(e) => {
+            Ok(JavaCheckResult {
+                installed: false,
+                version: None,
+                error: Some(format!("{}", e)),
+            })
+        }
+    }
 }
