@@ -20,19 +20,36 @@ pub struct JavaCheckResult {
 
 #[tauri::command]
 pub async fn call_clojure(app: tauri::AppHandle, cmd: String, args: Vec<String>) -> Result<ClojureResult, String> {
-    let jar_path = if let Ok(resource_dir) = app.path().resource_dir() {
-        resource_dir.join("gsein-war3.jar")
-    } else {
+    // Try multiple candidate paths for robustness across dev and production
+    let candidates: Vec<std::path::PathBuf> = vec![
+        // Production: resource dir next to exe
+        app.path().resource_dir().ok().map(|d| d.join("gsein-war3.jar")),
+        // Dev: relative to exe (target/debug/)
+        std::env::current_exe()
+            .ok()
+            .and_then(|exe| exe.parent().map(|p| p.join("gsein-war3.jar"))),
+        // Dev: relative to exe parent (target/)
+        std::env::current_exe()
+            .ok()
+            .and_then(|exe| exe.parent().and_then(|p| p.parent()).map(|p| p.join("gsein-war3.jar"))),
+        // Dev: fallback using exe -> project root -> clojure/target
         std::env::current_exe()
             .ok()
             .and_then(|exe| exe.parent().map(|p| p.to_path_buf()))
-            .map(|p| p.join("../../clojure/target/gsein-war3-0.1.0-SNAPSHOT-standalone.jar"))
-            .ok_or_else(|| "Could not resolve jar path in dev or production".to_string())?
-    };
+            .map(|p| p.join("../../../clojure/target/gsein-war3-0.1.0-SNAPSHOT-standalone.jar")),
+    ]
+    .into_iter()
+    .flatten()
+    .collect();
 
-    if !jar_path.exists() {
-        return Err(format!("Clojure jar not found at: {}", jar_path.display()));
-    }
+    let jar_path = candidates
+        .iter()
+        .find(|p| p.exists())
+        .cloned()
+        .ok_or_else(|| {
+            let tried = candidates.iter().map(|p| p.display().to_string()).collect::<Vec<_>>().join(", ");
+            format!("Clojure jar not found. Tried: {}", tried)
+        })?;
 
     let jar_path_str = jar_path.to_string_lossy().to_string();
 
