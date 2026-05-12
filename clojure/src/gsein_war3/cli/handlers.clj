@@ -2,6 +2,7 @@
   (:require [clojure.java.io :as jio]
             [clojure.string :as str]
             [clojure.edn :as edn]
+            [cheshire.core :as json]
             [selmer.parser :as sp]
             [gsein-war3.blp.generator :as blp]
             [gsein-war3.lni.available-id :as aid]
@@ -248,10 +249,10 @@
 ;; ---------- template generators ----------
 
 (defhandler general-skill-render [opts]
-  (let [data (parse-edn (:data opts "{}"))]
+  (let [data (json/parse-string (:data opts "{}") true)]
     (cond
       (empty? data)
-      (err "--data is required (EDN map)")
+      (err "--data is required (JSON map)")
       :else
       (ok (sp/render-file (jio/resource "templates/通魔.ini") data)))))
 
@@ -297,7 +298,8 @@
       (err "--tower-ids is required (EDN vector)")
       :else
       (let [lni-map (lni-reader/read-lni lni-file)
-            towers (tower-gen/get-towers lni-map tower-ids)
+            towers (->> (tower-gen/get-towers lni-map tower-ids)
+                        (map #(assoc % :name (get % "Name"))))
             ability-ids (aid/get-available-ids (count towers) (aid/project-id-producer project-dir) :ability "A100")
             ability-list (map (fn [id tower] {:id id :unit-id (:id tower) :name (subs (:name tower) 1 (dec (count (:name tower))))}) ability-ids towers)
             abilities-with-art (map (fn [a] (assoc a :art (get-in lni-map [(:unit-id a) "Art"] tower-gen/default-art))) ability-list)

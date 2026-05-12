@@ -74,7 +74,7 @@ async function query() {
     }
     const res = await callClojure('available-ids', args)
     if (res.success) {
-      const parsed = eval(res.stdout)
+      const parsed = JSON.parse(res.stdout)
       ids.value = parsed.output || []
       ElMessage.success(`查询到 ${ids.value.length} 个可用 ID`)
     } else {

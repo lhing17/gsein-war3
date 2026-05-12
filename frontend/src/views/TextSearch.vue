@@ -63,7 +63,7 @@ async function search() {
       '-d', form.dir,
     ])
     if (res.success) {
-      const parsed = eval(res.stdout)
+      const parsed = JSON.parse(res.stdout)
       const paths: string[] = parsed.output || []
       files.value = paths.map(p => ({ path: p }))
       ElMessage.success(`找到 ${files.value.length} 个文件`)

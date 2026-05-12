@@ -215,7 +215,7 @@ async function render() {
     const data = buildData()
     const res = await callClojure('general-skill-render', ['-d', JSON.stringify(data)])
     if (res.success) {
-      const parsed = eval(res.stdout)
+      const parsed = JSON.parse(res.stdout)
       result.value = parsed.output || ''
     } else {
       ElMessage.error(res.stderr || '生成失败')

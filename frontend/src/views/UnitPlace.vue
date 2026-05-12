@@ -62,7 +62,7 @@ async function calculate() {
       '-c', String(form.count),
     ])
     if (res.success) {
-      const parsed = eval(res.stdout)
+      const parsed = JSON.parse(res.stdout)
       const lines: string[] = parsed.output || []
       result.value = lines.map(line => {
         const [x, y, angle] = line.split(',').map(s => s.trim())

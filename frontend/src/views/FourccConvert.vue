@@ -49,7 +49,7 @@ async function convert() {
       '-m', form.mode,
     ])
     if (res.success) {
-      const parsed = eval(res.stdout)
+      const parsed = JSON.parse(res.stdout)
       result.value = parsed.output || ''
     } else {
       ElMessage.error(res.stderr || '转换失败')

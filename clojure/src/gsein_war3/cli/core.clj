@@ -2,6 +2,7 @@
   (:require [clojure.tools.cli :as cli]
             [clojure.string :as str]
             [clojure.edn :as edn]
+            [cheshire.core :as json]
             [gsein-war3.cli.handlers :as handlers])
   (:gen-class))
 
@@ -111,7 +112,7 @@
 
    "general-skill-render"
    {:desc "Render a general skill template"
-    :options [["-d" "--data EDN" "EDN map of template variables" :default "{}"]]
+    :options [["-d" "--data JSON" "JSON map of template variables" :default "{}"]]
     :handler handlers/general-skill-render}
 
    "generate-units"
@@ -178,7 +179,7 @@
 
             :else
             (let [result (handler options)]
-              (println (pr-str result))
+              (println (json/write-str result))
               (System/exit (if (= "ok" (:status result)) 0 1)))))
         (do (println (str "Unknown subcommand: " subcommand))
             (println (general-usage))

@@ -26,6 +26,8 @@
                  [com.twelvemonkeys.imageio/imageio-tga "3.8.3"]
                  ;; CLI
                  [org.clojure/tools.cli "1.1.230"]
+                 ;; JSON
+                 [cheshire "5.13.0"]
                  ]
   :repositories [["jitpack" "https://jitpack.io"]]
   :main gsein-war3.cli.core

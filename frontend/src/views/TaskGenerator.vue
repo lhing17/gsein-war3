@@ -100,7 +100,7 @@ async function generate() {
       '-t', toEdnTasks(valid),
     ])
     if (res.success) {
-      const parsed = eval(res.stdout)
+      const parsed = JSON.parse(res.stdout)
       result.value = parsed.output || ''
     } else {
       ElMessage.error(res.stderr || '生成失败')

@@ -75,7 +75,7 @@ async function convert() {
     }
     const res = await callClojure('xls-to-lni', args)
     if (res.success) {
-      const parsed = eval(res.stdout)
+      const parsed = JSON.parse(res.stdout)
       rows.value = parsed.output || []
       ElMessage.success(`读取到 ${rows.value.length} 行数据`)
     } else {
