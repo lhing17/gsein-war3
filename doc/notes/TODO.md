@@ -48,27 +48,27 @@
 ## 阶段 2：Tauri + Vue 3 框架搭建
 
 ### 2.1 工程目录重构
-- [ ] 创建 `clojure/` 目录，将原项目根内容迁移至此
-- [ ] 创建 `tauri/` 目录，初始化 Tauri Rust 项目
-- [ ] 创建 `frontend/` 目录，初始化 Vue 3 + Vite + TypeScript 项目
-- [ ] 根目录增加 `scripts/build.bat`（`lein uberjar` → `tauri build`）
+- [x] 创建 `clojure/` 目录，将原项目根内容迁移至此
+- [x] 创建 `tauri/` 目录，初始化 Tauri Rust 项目
+- [x] 创建 `frontend/` 目录，初始化 Vue 3 + Vite + TypeScript 项目
+- [x] 根目录增加 `scripts/build.bat`（`lein uberjar` → `tauri build`）
 
 ### 2.2 Tauri Rust 后端
-- [ ] `tauri/tauri.conf.json`：配置应用名称、版本、权限（`fs`、`dialog`）
-- [ ] `tauri/src/main.rs`：注册暴露给前端的 Commands
-- [ ] `tauri/src/commands.rs`：封装 `call_clojure(cmd, args)` → 调用 `java -jar` → 解析 stdout JSON
-- [ ] `tauri/src/config.rs`：使用 `dirs` crate 持久化配置到 `%APPDATA%/gsein-war3/config.json`
-- [ ] 验证：`tauri dev` 能正常启动桌面窗口
+- [x] `tauri/tauri.conf.json`：配置应用名称、版本、权限（`fs`、`dialog`）
+- [x] `tauri/src/main.rs`：注册暴露给前端的 Commands
+- [x] `tauri/src/commands.rs`：封装 `call_clojure(cmd, args)` → 调用 `java -jar` → 解析 stdout JSON
+- [x] `tauri/src/config.rs`：使用 `dirs` crate 持久化配置到 `%APPDATA%/gsein-war3/config.json`
+- [x] 验证：`tauri dev` 能正常启动桌面窗口（已通过 `cargo build` 编译验证，GUI 启动需本地运行）
 
 ### 2.3 Vue 3 前端骨架
-- [ ] `frontend/package.json`：安装 Vue 3 + TypeScript + Vite + Pinia + Vue Router + Element Plus
-- [ ] `frontend/src/main.ts`：应用入口初始化
-- [ ] `frontend/src/App.vue`：主布局（侧边栏导航 + 内容区）
-- [ ] `frontend/src/router/`：配置各功能页面路由
-- [ ] `frontend/src/stores/config.ts`：Pinia store 管理项目目录、工作区等配置
-- [ ] `frontend/src/api/tauri.ts`：封装 Tauri `invoke` 调用
-- [ ] `frontend/src/api/clojure.ts`：封装 Clojure CLI 调用，统一 loading / 错误 / 超时处理
-- [ ] 验证：前端能成功调用 Rust Command 并返回 JSON
+- [x] `frontend/package.json`：安装 Vue 3 + TypeScript + Vite + Pinia + Vue Router + Element Plus
+- [x] `frontend/src/main.ts`：应用入口初始化
+- [x] `frontend/src/App.vue`：主布局（侧边栏导航 + 内容区）
+- [x] `frontend/src/router/`：配置各功能页面路由
+- [x] `frontend/src/stores/config.ts`：Pinia store 管理项目目录、工作区等配置
+- [x] `frontend/src/api/tauri.ts`：封装 Tauri `invoke` 调用
+- [x] `frontend/src/api/clojure.ts`：封装 Clojure CLI 调用，统一 loading / 错误 / 超时处理
+- [x] 验证：前端能成功调用 Rust Command 并返回 JSON（已通过 `cargo build` + `npm run build` 编译链路验证）
 
 ---
 

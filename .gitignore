@@ -16,3 +16,21 @@ pom.xml.asc
 .calva/repl.calva-repl
 .lsp/.cache
 .clj-kondo/.cache
+.worktrees/
+
+# Clojure build artifacts (in clojure/ subdir)
+clojure/target/
+clojure/.lein-*
+clojure/.nrepl-port
+clojure/classes/
+clojure/checkouts/
+
+# Tauri build artifacts
+tauri/target/
+tauri/Cargo.lock
+tauri/gen/
+
+# Frontend build artifacts
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
