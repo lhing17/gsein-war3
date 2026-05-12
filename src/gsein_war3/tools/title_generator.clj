@@ -58,9 +58,11 @@
 
 (defn generate-title!
   "一键生成头顶称号"
-  [name color wing-file out-dir & {:keys [template-mdx-path old-texture-path]
+  [name color wing-file out-dir & {:keys [template-mdx-path old-texture-path font-name font-size]
                                    :or   {template-mdx-path "mdx/template.mdx"
-                                          old-texture-path  "war3mapImported\\kangkang.blp"}}]
+                                          old-texture-path  "war3mapImported\\kangkang.blp"
+                                          font-name         "方正颜宋简体_粗"
+                                          font-size         40}}]
   (let [eng-name (pinyin/get-pinyin-name name)
         blp-file (jio/file out-dir "temp" (str eng-name ".blp"))
         blp-parent (.getParentFile blp-file)
@@ -69,7 +71,8 @@
     (println (.getAbsolutePath blp-parent))
     (.mkdirs blp-parent)
     (delete-files-in-dir blp-parent)
-    (create-blp! name blp-file 256 128 color wing-file)
+    (let [img (create-img name 256 128 color wing-file font-name font-size)]
+      (ImageIO/write img "blp" blp-file))
     (FileUtils/copyFile template-mdx mdx-file)
     (converter/replace-blp mdx-file old-texture-path (.getName blp-file))))
 

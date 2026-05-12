@@ -121,7 +121,7 @@
        "Subcommands:\n"
        (str/join "\n"
                  (map (fn [[k v]] (str "  " k "  " (:desc v)))
-                      subcommands))
+                      (sort-by key subcommands)))
        "\n\n"
        "Use 'gsein-war3 <subcommand> --help' for subcommand-specific help."))
 

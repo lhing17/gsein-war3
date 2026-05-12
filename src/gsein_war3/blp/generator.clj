@@ -138,6 +138,9 @@
 
 (defn generate-blps
   "根据图片文件和类型生成blp文件，active-type可选值为active和passive，注意此函数会生成两个64*64的BLP文件， 一个为亮图标，一个为暗图标"
+  ([^File image-file active-type]
+   (throw (IllegalArgumentException.
+           "generate-blps requires temp-dir and project-dir. Use (generate-blps image-file active-type temp-dir project-dir)")))
   ([^File image-file active-type temp-dir project-dir]
    (let [fn-coll (get-fn-coll active-type (.getName image-file) temp-dir)
          image (img/resize-to-64 (ImageIO/read image-file))

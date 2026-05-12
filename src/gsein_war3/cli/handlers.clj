@@ -35,238 +35,207 @@
 (defn- file-exists? [path]
   (when path (.exists (jio/file path))))
 
+(defmacro defhandler
+  "定义一个 handler，自动包装 try/catch 和统一返回格式"
+  [name args & body]
+  `(defn ~name ~args
+     (try
+       ~@body
+       (catch Exception e#
+         (err (.getMessage e#))))))
+
 ;; ---------- handlers ----------
 
-(defn blp-generate [opts]
-  (try
-    (let [input-file (jio/file (:input-file opts))
-          active-type (:type opts "active")
-          temp-dir (:temp-dir opts)
-          project-dir (:project-dir opts)]
-      (cond
-        (not (file-exists? (:input-file opts)))
-        (err (str "Input file not found: " (:input-file opts)))
-        (str/blank? temp-dir)
-        (err "--temp-dir is required")
-        (str/blank? project-dir)
-        (err "--project-dir is required")
-        :else
-        (ok (blp/generate-blps input-file active-type temp-dir project-dir))))
-    (catch Exception e
-      (err (.getMessage e)))))
+(defhandler blp-generate [opts]
+  (let [input-file (jio/file (:input-file opts))
+        active-type (:type opts "active")
+        temp-dir (:temp-dir opts)
+        project-dir (:project-dir opts)]
+    (cond
+      (not (file-exists? (:input-file opts)))
+      (err (str "Input file not found: " (:input-file opts)))
+      (str/blank? temp-dir)
+      (err "--temp-dir is required")
+      (str/blank? project-dir)
+      (err "--project-dir is required")
+      :else
+      (ok (blp/generate-blps input-file active-type temp-dir project-dir)))))
 
-(defn available-ids [opts]
-  (try
-    (let [project-dir (:project-dir opts)
-          type (keyword (:type opts "ability"))
-          n (parse-int (:count opts "10"))
-          start-id (:start-id opts)]
-      (cond
-        (str/blank? project-dir)
-        (err "--project-dir is required")
-        :else
-        (ok (if start-id
-              (aid/get-available-ids n (aid/project-id-producer project-dir) type start-id)
-              (aid/get-available-ids n (aid/project-id-producer project-dir) type)))))
-    (catch Exception e
-      (err (.getMessage e)))))
+(defhandler available-ids [opts]
+  (let [project-dir (:project-dir opts)
+        type (keyword (:type opts "ability"))
+        n (parse-int (:count opts "10"))
+        start-id (:start-id opts)]
+    (cond
+      (str/blank? project-dir)
+      (err "--project-dir is required")
+      :else
+      (ok (if start-id
+            (aid/get-available-ids n (aid/project-id-producer project-dir) type start-id)
+            (aid/get-available-ids n (aid/project-id-producer project-dir) type))))))
 
-(defn lni-read [opts]
-  (try
-    (let [file (:file opts)]
-      (cond
-        (not (file-exists? file))
-        (err (str "File not found: " file))
-        :else
-        (ok (lni-reader/read-lni file))))
-    (catch Exception e
-      (err (.getMessage e)))))
+(defhandler lni-read [opts]
+  (let [file (:file opts)]
+    (cond
+      (not (file-exists? file))
+      (err (str "File not found: " file))
+      :else
+      (ok (lni-reader/read-lni file)))))
 
-(defn lni-write [opts]
-  (try
-    (let [file (:file opts)
-          data (parse-edn (:data opts))]
-      (cond
-        (str/blank? file)
-        (err "--file is required")
-        (nil? data)
-        (err "--data is required (EDN string)")
-        :else
-        (do (lni-writer/write-lni file data)
-            (ok {:file file}))))
-    (catch Exception e
-      (err (.getMessage e)))))
+(defhandler lni-write [opts]
+  (let [file (:file opts)
+        data (parse-edn (:data opts))]
+    (cond
+      (str/blank? file)
+      (err "--file is required")
+      (nil? data)
+      (err "--data is required (EDN string)")
+      :else
+      (do (lni-writer/write-lni file data)
+          (ok {:file file})))))
 
-(defn mdx-replace-blp [opts]
-  (try
-    (let [mdx-file (:mdx-file opts)
-          old-blp (:old-blp opts)
-          new-blp (:new-blp opts)]
-      (cond
-        (not (file-exists? mdx-file))
-        (err (str "MDX file not found: " mdx-file))
-        (str/blank? old-blp)
-        (err "--old-blp is required")
-        (str/blank? new-blp)
-        (err "--new-blp is required")
-        :else
-        (do (mdx-conv/replace-blp (jio/file mdx-file) old-blp new-blp)
-            (ok {:mdx-file mdx-file :replaced old-blp :with new-blp}))))
-    (catch Exception e
-      (err (.getMessage e)))))
+(defhandler mdx-replace-blp [opts]
+  (let [mdx-file (:mdx-file opts)
+        old-blp (:old-blp opts)
+        new-blp (:new-blp opts)]
+    (cond
+      (not (file-exists? mdx-file))
+      (err (str "MDX file not found: " mdx-file))
+      (str/blank? old-blp)
+      (err "--old-blp is required")
+      (str/blank? new-blp)
+      (err "--new-blp is required")
+      :else
+      (do (mdx-conv/replace-blp (jio/file mdx-file) old-blp new-blp)
+          (ok {:mdx-file mdx-file :replaced old-blp :with new-blp})))))
 
-(defn mdx-classify [opts]
-  (try
-    (let [source-dir (:source-dir opts)
-          out-dir (:out-dir opts)
-          mode (keyword (:mode opts "copy"))]
-      (cond
-        (not (file-exists? source-dir))
-        (err (str "Source directory not found: " source-dir))
-        (str/blank? out-dir)
-        (err "--out-dir is required")
-        :else
-        (do (mdx-cls/classify (jio/file source-dir) (jio/file out-dir) mode)
-            (ok {:source-dir source-dir :out-dir out-dir :mode mode}))))
-    (catch Exception e
-      (err (.getMessage e)))))
+(defhandler mdx-classify [opts]
+  (let [source-dir (:source-dir opts)
+        out-dir (:out-dir opts)
+        mode (keyword (:mode opts "copy"))]
+    (cond
+      (not (file-exists? source-dir))
+      (err (str "Source directory not found: " source-dir))
+      (str/blank? out-dir)
+      (err "--out-dir is required")
+      :else
+      (do (mdx-cls/classify (jio/file source-dir) (jio/file out-dir) mode)
+          (ok {:source-dir source-dir :out-dir out-dir :mode mode})))))
 
-(defn template-render [opts]
-  (try
-    (let [template (:template opts)
-          data (parse-edn (:data opts "{}"))]
-      (cond
-        (str/blank? template)
-        (err "--template is required (resource path)")
-        :else
-        (ok (sp/render-file (jio/resource template) data))))
-    (catch Exception e
-      (err (.getMessage e)))))
+(defhandler template-render [opts]
+  (let [template (:template opts)
+        data (parse-edn (:data opts "{}"))]
+    (cond
+      (str/blank? template)
+      (err "--template is required (resource path)")
+      :else
+      (ok (sp/render-file (jio/resource template) data)))))
 
-(defn xls-to-lni [opts]
-  (try
-    (let [xls-file (:xls-file opts)
-          sheet (:sheet opts)
-          columns (parse-edn (:columns opts "{}"))]
-      (cond
-        (not (file-exists? xls-file))
-        (err (str "XLS file not found: " xls-file))
-        (str/blank? sheet)
-        (err "--sheet is required")
-        :else
-        (ok (xls/xls->obj xls-file sheet columns))))
-    (catch Exception e
-      (err (.getMessage e)))))
+(defhandler xls-to-lni [opts]
+  (let [xls-file (:xls-file opts)
+        sheet (:sheet opts)
+        columns (parse-edn (:columns opts "{}"))]
+    (cond
+      (not (file-exists? xls-file))
+      (err (str "XLS file not found: " xls-file))
+      (str/blank? sheet)
+      (err "--sheet is required")
+      :else
+      (ok (xls/xls->obj xls-file sheet columns)))))
 
-(defn title-generate [opts]
-  (try
-    (let [name (:name opts)
-          color-str (:color opts "BLUE")
-          wing-file (:wing-file opts)
-          out-dir (:out-dir opts)
-          font-name (:font-name opts "方正颜宋简体_粗")
-          font-size (parse-int (:font-size opts "40"))
-          template-mdx-path (:template-mdx-path opts)
-          old-texture-path (:old-texture-path opts)]
-      (cond
-        (str/blank? name)
-        (err "--name is required")
-        (str/blank? out-dir)
-        (err "--out-dir is required")
-        :else
-        (let [color (case color-str
-                      "BLUE" Color/BLUE
-                      "RED" Color/RED
-                      "GREEN" Color/GREEN
-                      "BLACK" Color/BLACK
-                      "WHITE" Color/WHITE
-                      (Color/decode color-str))
-              wing (if wing-file (jio/file wing-file) (jio/file (jio/resource "images/background/3.png")))
-              kwargs (cond-> {}
-                      template-mdx-path (assoc :template-mdx-path template-mdx-path)
-                      old-texture-path (assoc :old-texture-path old-texture-path))]
-          (apply title/generate-title! name color wing out-dir (mapcat identity kwargs))
-          (ok {:name name :out-dir out-dir}))))
-    (catch Exception e
-      (err (.getMessage e)))))
+(defhandler title-generate [opts]
+  (let [name (:name opts)
+        color-str (:color opts "BLUE")
+        wing-file (:wing-file opts)
+        out-dir (:out-dir opts)
+        font-name (:font-name opts "方正颜宋简体_粗")
+        font-size (parse-int (:font-size opts "40"))
+        template-mdx-path (:template-mdx-path opts)
+        old-texture-path (:old-texture-path opts)]
+    (cond
+      (str/blank? name)
+      (err "--name is required")
+      (str/blank? out-dir)
+      (err "--out-dir is required")
+      :else
+      (let [color (case color-str
+                    "BLUE" Color/BLUE
+                    "RED" Color/RED
+                    "GREEN" Color/GREEN
+                    "BLACK" Color/BLACK
+                    "WHITE" Color/WHITE
+                    (Color/decode color-str))
+            wing (if wing-file (jio/file wing-file) (jio/file (jio/resource "images/background/3.png")))
+            kwargs (cond-> {:font-name font-name
+                            :font-size font-size}
+                    template-mdx-path (assoc :template-mdx-path template-mdx-path)
+                    old-texture-path (assoc :old-texture-path old-texture-path))]
+        (apply title/generate-title! name color wing out-dir (mapcat identity kwargs))
+        (ok {:name name :out-dir out-dir})))))
 
-(defn image-split [opts]
-  (try
-    (let [input-file (:input-file opts)
-          out-dir (:out-dir opts ".")
-          names (parse-edn (:names opts "[]"))
-          format (:format opts "blp")]
-      (cond
-        (not (file-exists? input-file))
-        (err (str "Input file not found: " input-file))
-        :else
-        (let [img (ImageIO/read (jio/file input-file))
-              splitter (fn [rect]
-                         (->> [rect]
-                              (mapcat #(img-split/split-rectangle % :horizontal 512))
-                              (mapcat #(img-split/split-rectangle % :vertical 512))))
-              result (img-split/split-image (img-split/make-image [img]) splitter)]
-          (img-split/write-image result out-dir names format)
-          (ok {:out-dir out-dir :names names :format format}))))
-    (catch Exception e
-      (err (.getMessage e)))))
+(defhandler image-split [opts]
+  (let [input-file (:input-file opts)
+        out-dir (:out-dir opts ".")
+        names (parse-edn (:names opts "[]"))
+        format (:format opts "blp")]
+    (cond
+      (not (file-exists? input-file))
+      (err (str "Input file not found: " input-file))
+      :else
+      (let [img (ImageIO/read (jio/file input-file))
+            splitter (fn [rect]
+                       (->> [rect]
+                            (mapcat #(img-split/split-rectangle % :horizontal 512))
+                            (mapcat #(img-split/split-rectangle % :vertical 512))))
+            result (img-split/split-image (img-split/make-image [img]) splitter)]
+        (img-split/write-image result out-dir names format)
+        (ok {:out-dir out-dir :names names :format format})))))
 
-(defn constant-replace [opts]
-  (try
-    (let [input-file (:input-file opts)
-          constants-file (:constants-file opts)]
-      (cond
-        (not (file-exists? input-file))
-        (err (str "Input file not found: " input-file))
-        (not (file-exists? constants-file))
-        (err (str "Constants file not found: " constants-file))
-        :else
-        (let [constants (const-rep/read-constants (jio/file constants-file))
-              reverse-map (into {} (map (fn [[k v]] [v k]) constants))
-              content (slurp input-file)
-              result (const-rep/replace-literal-with-constant content reverse-map)]
-          (spit input-file result)
-          (ok {:input-file input-file :replaced (count reverse-map)}))))
-    (catch Exception e
-      (err (.getMessage e)))))
+(defhandler constant-replace [opts]
+  (let [input-file (:input-file opts)
+        constants-file (:constants-file opts)]
+    (cond
+      (not (file-exists? input-file))
+      (err (str "Input file not found: " input-file))
+      (not (file-exists? constants-file))
+      (err (str "Constants file not found: " constants-file))
+      :else
+      (let [constants (const-rep/read-constants (jio/file constants-file))
+            reverse-map (into {} (map (fn [[k v]] [v k]) constants))
+            content (slurp input-file)
+            result (const-rep/replace-literal-with-constant content reverse-map)]
+        (spit input-file result)
+        (ok {:input-file input-file :replaced (count reverse-map)})))))
 
-(defn text-search [opts]
-  (try
-    (let [text (:text opts)
-          dir (:dir opts)]
-      (cond
-        (str/blank? text)
-        (err "--text is required")
-        (not (file-exists? dir))
-        (err (str "Directory not found: " dir))
-        :else
-        (ok (map #(.getAbsolutePath %) (txt-search/search-text text (jio/file dir))))))
-    (catch Exception e
-      (err (.getMessage e)))))
+(defhandler text-search [opts]
+  (let [text (:text opts)
+        dir (:dir opts)]
+    (cond
+      (str/blank? text)
+      (err "--text is required")
+      (not (file-exists? dir))
+      (err (str "Directory not found: " dir))
+      :else
+      (ok (map #(.getAbsolutePath %) (txt-search/search-text text (jio/file dir)))))))
 
-(defn unit-place [opts]
-  (try
-    (let [center-x (Double/parseDouble (:center-x opts))
-          center-y (Double/parseDouble (:center-y opts))
-          dist (Double/parseDouble (:dist opts))
-          cnt (parse-int (:count opts))]
-      (ok (unit-plc/unit-placer center-x center-y dist cnt)))
-    (catch Exception e
-      (err (.getMessage e)))))
+(defhandler unit-place [opts]
+  (let [center-x (Double/parseDouble (:center-x opts))
+        center-y (Double/parseDouble (:center-y opts))
+        dist (Double/parseDouble (:dist opts))
+        cnt (parse-int (:count opts))]
+    (ok (unit-plc/unit-placer center-x center-y dist cnt))))
 
-(defn fourcc-convert [opts]
-  (try
-    (let [value (:value opts)
-          mode (:mode opts "fourcc")]
-      (cond
-        (str/blank? value)
-        (err "--value is required")
-        :else
-        (ok (case mode
-              "fourcc" (nbc/fourcc (Long/parseLong value))
-              "hex-to-fourcc" (nbc/hex-to-fourcc value)
-              "fourcc-to-decimal" (nbc/fourcc-to-decimal value)
-              "fourcc-to-hex" (nbc/fourcc-to-hex value)
-              (err (str "Unknown mode: " mode))))))
-    (catch Exception e
-      (err (.getMessage e)))))
+(defhandler fourcc-convert [opts]
+  (let [value (:value opts)
+        mode (:mode opts "fourcc")]
+    (cond
+      (str/blank? value)
+      (err "--value is required")
+      (not (#{"fourcc" "hex-to-fourcc" "fourcc-to-decimal" "fourcc-to-hex"} mode))
+      (err (str "Unknown mode: " mode))
+      :else
+      (ok (case mode
+            "fourcc" (nbc/fourcc (Long/parseLong value))
+            "hex-to-fourcc" (nbc/hex-to-fourcc value)
+            "fourcc-to-decimal" (nbc/fourcc-to-decimal value)
+            "fourcc-to-hex" (nbc/fourcc-to-hex value))))))
