@@ -4,6 +4,17 @@ use tauri::Manager;
 
 use crate::config::{load_config, save_config, AppConfig};
 
+fn decode_java_output(bytes: &[u8]) -> String {
+    #[cfg(target_os = "windows")]
+    {
+        encoding_rs::GB18030.decode(bytes).0.to_string()
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        String::from_utf8_lossy(bytes).to_string()
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ClojureResult {
     pub success: bool,
@@ -61,9 +72,20 @@ pub async fn call_clojure(app: tauri::AppHandle, cmd: String, args: Vec<String>)
         .output()
         .map_err(|e| format!("Failed to execute java: {}", e))?;
 
-    let stdout = String::from_utf8_lossy(&output.stdout).to_string();
-    let stderr = String::from_utf8_lossy(&output.stderr).to_string();
+    let stdout = decode_java_output(&output.stdout);
+    let stderr = decode_java_output(&output.stderr);
     let success = output.status.success();
+
+    // Print to Rust console so dev can see Clojure output in the terminal
+    println!("[call_clojure] jar: {}", jar_path_str);
+    println!("[call_clojure] cmd: {} args: {:?}", cmd, args);
+    println!("[call_clojure] success: {}", success);
+    if !stdout.is_empty() {
+        println!("[call_clojure] stdout:\n{}", stdout);
+    }
+    if !stderr.is_empty() {
+        println!("[call_clojure] stderr:\n{}", stderr);
+    }
 
     Ok(ClojureResult {
         success,
@@ -90,7 +112,7 @@ pub async fn check_java() -> Result<JavaCheckResult, String> {
 
     match output {
         Ok(out) => {
-            let stderr = String::from_utf8_lossy(&out.stderr);
+            let stderr = decode_java_output(&out.stderr);
             // java -version writes to stderr
             let version_line = stderr.lines().next().unwrap_or("");
             let version = if version_line.contains("version") {
