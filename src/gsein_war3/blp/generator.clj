@@ -1,6 +1,5 @@
 (ns gsein-war3.blp.generator
   (:require [clojure.java.io :as jio]
-            [gsein-war3.config :as config]
             [gsein-war3.util.image :as img]
             [gsein-war3.util.pinyin :as pinyin])
   (:import (java.io File)
@@ -34,8 +33,6 @@
                   :dir           :default
                   :prefix        ""}
    })
-
-(def env (config/get-config))
 
 (defrecord blp [name dir image])
 
@@ -76,7 +73,7 @@
 
 
 (comment
-  (def base-dir (:project-dir env))
+  (def base-dir "D:/IdeaProjects/small/small")
   (-> (ImageIO/read (File. "E:\\Downloads\\帮助.png"))
       (image-to-blp :default base-dir "helpme")
       (output-to-file))
@@ -100,16 +97,16 @@
     :passive (output-blp identity :passive command-dir "PASBTN")
     :passive-dark (output-blp #(img/adjust-brightness % -64) :passive command-disabled-dir "DISPASBTN")))
 
-(defn- get-fn-by-type 
+(defn- get-fn-by-type
   "根据类型获取输出blp的函数"
-  [type image-name]
-  #((output-blp-fn (keyword type)) % image-name (:temp-dir env) {:filter-type :default}))
+  [type image-name temp-dir]
+  #((output-blp-fn (keyword type)) % image-name temp-dir {:filter-type :default}))
 
-(defn get-fn-coll 
+(defn get-fn-coll
   "根据类型获取输出blp的函数的集合"
-  [type image-name]
-  [(get-fn-by-type type image-name)
-   (get-fn-by-type (str type "-dark") image-name)])
+  [type image-name temp-dir]
+  [(get-fn-by-type type image-name temp-dir)
+   (get-fn-by-type (str type "-dark") image-name temp-dir)])
 
 (defn map-deal-image! 
   "对图像集合应用函数"
@@ -121,36 +118,38 @@
   [^String path]
   (Paths/get path (into-array String [])))
 
-(defn get-project-target-dir 
+(defn get-project-target-dir
   "根据临时目录和项目目录获取目标目录"
-  [^String path]
+  [^String path temp-dir project-dir]
   (->> path
        (to-path)
        (.getParent)
-       (.relativize (to-path (:temp-dir env)))
-       (.resolve (Paths/get (:project-dir env) (into-array ["resource"])))
+       (.relativize (to-path temp-dir))
+       (.resolve (Paths/get project-dir (into-array ["resource"])))
        (.toFile)))
 
-(defn copy 
+(defn copy
   "将文件复制到目标目录"
-  [^String path]
-  (when path
-    (FileUtils/copyFileToDirectory (jio/file path) (get-project-target-dir path))
-    (str (.relativize (to-path (:temp-dir env)) (to-path path)))))
+  ([^String path temp-dir project-dir]
+   (when path
+     (FileUtils/copyFileToDirectory (jio/file path) (get-project-target-dir path temp-dir project-dir))
+     (str (.relativize (to-path temp-dir) (to-path path))))))
 
 
 (defn generate-blps
   "根据图片文件和类型生成blp文件，active-type可选值为active和passive，注意此函数会生成两个64*64的BLP文件， 一个为亮图标，一个为暗图标"
-  [^File image-file active-type]
-  (let [fn-coll (get-fn-coll active-type (.getName image-file))
-        image (img/resize-to-64 (ImageIO/read image-file))
-        temp-blps (map-deal-image! image fn-coll)]
-    (mapv #(copy %) temp-blps)))
+  ([^File image-file active-type temp-dir project-dir]
+   (let [fn-coll (get-fn-coll active-type (.getName image-file) temp-dir)
+         image (img/resize-to-64 (ImageIO/read image-file))
+         temp-blps (map-deal-image! image fn-coll)]
+     (mapv #(copy % temp-dir project-dir) temp-blps))))
 
 (comment
+  (def temp-dir "D:/tmp")
+  (def project-dir "D:/IdeaProjects/small/small")
   (def books (map-deal-image!
                (img/resize-to-64 (ImageIO/read (java.io.File. "D:\\IdeaProjects\\small\\resources\\images\\天鹰.png")))
-               (get-fn-coll "active" "天鹰.png")
+               (get-fn-coll "active" "天鹰.png" temp-dir)
                ))
 
   (def image (img/resize-to-64 (ImageIO/read (java.io.File. "D:\\IdeaProjects\\small\\resources\\images\\天鹰.png"))))
@@ -158,49 +157,49 @@
   (ImageIO/write border "png" (java.io.File. "D:\\tmp\\天鹰.png"))
   (img/output-as-blp border (command-dir "D:\\tmp") (pinyin/get-pinyin-name "天鹰.png") "BTN")
 
-  (doseq [book books] (copy book))
+  (doseq [book books] (copy book temp-dir project-dir))
 
-  (generate-blps (java.io.File. "D:\\IdeaProjects\\jztd-reborn\\resources\\图标\\sync.png") "active")
+  (generate-blps (java.io.File. "D:\\IdeaProjects\\jztd-reborn\\resources\\图标\\sync.png") "active" temp-dir project-dir)
 
   (doseq [file (file-seq (jio/file "D:\\IdeaProjects\\europe\\resources\\图标\\装备"))]
     (when (.isFile file)
-      (generate-blps file "active")))
+      (generate-blps file "active" temp-dir project-dir)))
 
 
   (doseq [file (file-seq (jio/file "D:\\IdeaProjects\\jzjh-reborn\\resources\\美食"))]
     (when (.isFile file)
-      (generate-blps file "active")))
+      (generate-blps file "active" temp-dir project-dir)))
 
 
 
-  (generate-blps (jio/file "D:\\Development\\war3-dev\\photoshop\\混元.png") "active")
-  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\高级抽卡.png") "active")
-  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\购买人口.png") "active")
-  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\解锁抽卡.png") "active")
-  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\金币.png") "active")
-  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\木材.png") "active")
-  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\中级抽卡.png") "active")
+  (generate-blps (jio/file "D:\\Development\\war3-dev\\photoshop\\混元.png") "active" temp-dir project-dir)
+  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\高级抽卡.png") "active" temp-dir project-dir)
+  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\购买人口.png") "active" temp-dir project-dir)
+  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\解锁抽卡.png") "active" temp-dir project-dir)
+  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\金币.png") "active" temp-dir project-dir)
+  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\木材.png") "active" temp-dir project-dir)
+  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\中级抽卡.png") "active" temp-dir project-dir)
 
 
-  (generate-blps (jio/file "D:\\IdeaProjects\\jzjh-reborn\\resources\\美食\\黑暗料理.png") "active")
-  (generate-blps (jio/file "D:\\IdeaProjects\\jzjh-reborn\\resources\\美食\\烹饪.png") "active")
+  (generate-blps (jio/file "D:\\IdeaProjects\\jzjh-reborn\\resources\\美食\\黑暗料理.png") "active" temp-dir project-dir)
+  (generate-blps (jio/file "D:\\IdeaProjects\\jzjh-reborn\\resources\\美食\\烹饪.png") "active" temp-dir project-dir)
 
 
-  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\图标\\完成\\合成.png") "active")
-  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\图标\\完成\\升级.png") "active")
+  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\图标\\完成\\合成.png") "active" temp-dir project-dir)
+  (generate-blps (jio/file "D:\\IdeaProjects\\jztd-reborn\\resources\\图标\\完成\\升级.png") "active" temp-dir project-dir)
 
-  (generate-blps (jio/file "D:\\IdeaProjects\\jzjh-reborn\\resources\\食材\\酱.png") "passive")
+  (generate-blps (jio/file "D:\\IdeaProjects\\jzjh-reborn\\resources\\食材\\酱.png") "passive" temp-dir project-dir)
 
-  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\苗人凤.png") "active")
-  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\温青.png") "active")
-  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\河马.png") "active")
-  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\赤龙.png") "active")
-  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\紫罗兰.png") "active")
-  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\蓝色.png") "active")
-  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\雪影.png") "passive")
-  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\龙威.png") "passive")
+  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\苗人凤.png") "active" temp-dir project-dir)
+  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\温青.png") "active" temp-dir project-dir)
+  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\河马.png") "active" temp-dir project-dir)
+  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\赤龙.png") "active" temp-dir project-dir)
+  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\紫罗兰.png") "active" temp-dir project-dir)
+  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\蓝色.png") "active" temp-dir project-dir)
+  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\雪影.png") "passive" temp-dir project-dir)
+  (generate-blps (jio/file "D:\\IdeaProjects\\JZJH\\resources\\技能图标\\龙威.png") "passive" temp-dir project-dir)
 
-  (generate-blps (jio/file "D:\\IdeaProjects\\europe\\resources\\图标\\技能\\升级.png") "active")
+  (generate-blps (jio/file "D:\\IdeaProjects\\europe\\resources\\图标\\技能\\升级.png") "active" temp-dir project-dir)
 
 
   )
