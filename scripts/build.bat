@@ -153,7 +153,7 @@ echo [build] ==========================================
 echo [build] Step 4/4: Building Tauri desktop app...
 echo [build] ==========================================
 
-cd /d "%PROJECT_ROOT%\tauri"
+cd /d "%PROJECT_ROOT%\frontend"
 
 :: Check if --debug flag is passed
 set "TAURI_ARGS="
@@ -175,11 +175,6 @@ echo [build] Build completed successfully!
 echo [build] ==========================================
 
 :: Report output locations
-if exist "%PROJECT_ROOT%\tauri\src-tauri\target\release\bundle\msi" (
-    echo [build] MSI installer location:
-    dir /b "%PROJECT_ROOT%\tauri\src-tauri\target\release\bundle\msi\*.msi" 2>nul
-)
-
 if exist "%PROJECT_ROOT%\tauri\target\release\bundle\msi" (
     echo [build] MSI installer location:
     dir /b "%PROJECT_ROOT%\tauri\target\release\bundle\msi\*.msi" 2>nul
