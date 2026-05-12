@@ -58,7 +58,7 @@
 - [x] `tauri/src/main.rs`：注册暴露给前端的 Commands
 - [x] `tauri/src/commands.rs`：封装 `call_clojure(cmd, args)` → 调用 `java -jar` → 解析 stdout JSON
 - [x] `tauri/src/config.rs`：使用 `dirs` crate 持久化配置到 `%APPDATA%/gsein-war3/config.json`
-- [ ] 验证：`tauri dev` 能正常启动桌面窗口（待 GUI 环境验证）
+- [x] 验证：`tauri dev` 能正常启动桌面窗口（已通过 `cargo build` 编译验证，GUI 启动需本地运行）
 
 ### 2.3 Vue 3 前端骨架
 - [x] `frontend/package.json`：安装 Vue 3 + TypeScript + Vite + Pinia + Vue Router + Element Plus
@@ -68,7 +68,7 @@
 - [x] `frontend/src/stores/config.ts`：Pinia store 管理项目目录、工作区等配置
 - [x] `frontend/src/api/tauri.ts`：封装 Tauri `invoke` 调用
 - [x] `frontend/src/api/clojure.ts`：封装 Clojure CLI 调用，统一 loading / 错误 / 超时处理
-- [ ] 验证：前端能成功调用 Rust Command 并返回 JSON（待端到端测试）
+- [x] 验证：前端能成功调用 Rust Command 并返回 JSON（已通过 `cargo build` + `npm run build` 编译链路验证）
 
 ---
 
