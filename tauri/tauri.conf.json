@@ -27,7 +27,10 @@
   },
   "bundle": {
     "active": true,
-    "targets": "msi"
+    "targets": "msi",
+    "resources": {
+      "../clojure/target/gsein-war3-0.1.0-SNAPSHOT-standalone.jar": "gsein-war3.jar"
+    }
   },
   "plugins": {
     "fs": {

@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::process::Command;
+use tauri::Manager;
 
 use crate::config::{load_config, save_config, AppConfig};
 
@@ -11,12 +12,20 @@ pub struct ClojureResult {
 }
 
 #[tauri::command]
-pub async fn call_clojure(cmd: String, args: Vec<String>) -> Result<ClojureResult, String> {
-    let jar_path = std::env::current_exe()
-        .ok()
-        .and_then(|p| p.parent().map(|p| p.to_path_buf()))
-        .unwrap_or_default()
-        .join("../clojure/target/uberjar/gsein-war3-0.1.0-SNAPSHOT-standalone.jar");
+pub async fn call_clojure(app: tauri::AppHandle, cmd: String, args: Vec<String>) -> Result<ClojureResult, String> {
+    let jar_path = if let Ok(resource_dir) = app.path().resource_dir() {
+        resource_dir.join("gsein-war3.jar")
+    } else {
+        std::env::current_exe()
+            .ok()
+            .and_then(|exe| exe.parent().map(|p| p.to_path_buf()))
+            .map(|p| p.join("../../clojure/target/gsein-war3-0.1.0-SNAPSHOT-standalone.jar"))
+            .ok_or_else(|| "Could not resolve jar path in dev or production".to_string())?
+    };
+
+    if !jar_path.exists() {
+        return Err(format!("Clojure jar not found at: {}", jar_path.display()));
+    }
 
     let jar_path_str = jar_path.to_string_lossy().to_string();
 
