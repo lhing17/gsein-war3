@@ -15,7 +15,12 @@
             [gsein-war3.tools.text-searcher :as txt-search]
             [gsein-war3.tools.unit-placer :as unit-plc]
             [gsein-war3.tools.number-base-converter :as nbc]
-            [gsein-war3.tools.xls-to-lni :as xls])
+            [gsein-war3.tools.xls-to-lni :as xls]
+            [gsein-war3.tools.general-skill-generator :as gskill]
+            [gsein-war3.tools.unit-generator :as unit-gen]
+            [gsein-war3.tools.item-generator :as item-gen]
+            [gsein-war3.tools.tower-generator :as tower-gen]
+            [gsein-war3.tools.task-item-generator :as task-gen])
   (:import (java.io File)
            (java.awt Color)
            (javax.imageio ImageIO)))
@@ -239,3 +244,71 @@
             "hex-to-fourcc" (nbc/hex-to-fourcc value)
             "fourcc-to-decimal" (nbc/fourcc-to-decimal value)
             "fourcc-to-hex" (nbc/fourcc-to-hex value))))))
+
+;; ---------- template generators ----------
+
+(defhandler general-skill-render [opts]
+  (let [data (parse-edn (:data opts "{}"))]
+    (cond
+      (empty? data)
+      (err "--data is required (EDN map)")
+      :else
+      (ok (sp/render-file (jio/resource "templates/通魔.ini") data)))))
+
+(defhandler generate-units [opts]
+  (let [project-dir (:project-dir opts)
+        unit-type (:unit-type opts "普通")
+        names (parse-edn (:names opts "[]"))]
+    (cond
+      (str/blank? project-dir)
+      (err "--project-dir is required")
+      (empty? names)
+      (err "--names is required (EDN vector)")
+      :else
+      (let [ids (aid/get-available-ids (count names) (aid/project-id-producer project-dir) :unit)
+            units (map #(hash-map :id %1 :unit-type unit-type :name %2) ids names)]
+        (ok (unit-gen/generate-units units))))))
+
+(defhandler generate-items [opts]
+  (let [project-dir (:project-dir opts)
+        names (parse-edn (:names opts "[]"))]
+    (cond
+      (str/blank? project-dir)
+      (err "--project-dir is required")
+      (empty? names)
+      (err "--names is required (EDN vector)")
+      :else
+      (let [ids (aid/get-available-ids (count names) (aid/project-id-producer project-dir) :item)
+            items (map #(hash-map :id %1 :name %2) ids names)]
+        (ok (->> items
+                 (map #(sp/render item-gen/tpl %))
+                 (str/join "\n")))))))
+
+(defhandler generate-towers [opts]
+  (let [project-dir (:project-dir opts)
+        lni-file (:lni-file opts)
+        tower-ids (parse-edn (:tower-ids opts "[]"))]
+    (cond
+      (str/blank? project-dir)
+      (err "--project-dir is required")
+      (not (file-exists? lni-file))
+      (err (str "LNI file not found: " lni-file))
+      (empty? tower-ids)
+      (err "--tower-ids is required (EDN vector)")
+      :else
+      (let [lni-map (lni-reader/read-lni lni-file)
+            towers (tower-gen/get-towers lni-map tower-ids)
+            ability-ids (aid/get-available-ids (count towers) (aid/project-id-producer project-dir) :ability "A100")
+            ability-list (map (fn [id tower] {:id id :unit-id (:id tower) :name (subs (:name tower) 1 (dec (count (:name tower))))}) ability-ids towers)
+            abilities-with-art (map (fn [a] (assoc a :art (get-in lni-map [(:unit-id a) "Art"] tower-gen/default-art))) ability-list)
+            abilities (tower-gen/generate-tower-building-ability towers project-dir)
+            items (tower-gen/generate-tower-building-item abilities-with-art project-dir)]
+        (ok {:abilities abilities :items items})))))
+
+(defhandler generate-tasks [opts]
+  (let [tasks (parse-edn (:tasks opts "[]"))]
+    (cond
+      (empty? tasks)
+      (err "--tasks is required (EDN vector)")
+      :else
+      (ok (task-gen/generate-tasks tasks)))))

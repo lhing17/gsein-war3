@@ -107,7 +107,37 @@
    {:desc "Convert between FourCC, hex, and decimal"
     :options [["-v" "--value VALUE" "Value to convert"]
               ["-m" "--mode MODE" "Conversion mode: fourcc, hex-to-fourcc, fourcc-to-decimal, fourcc-to-hex" :default "fourcc"]]
-    :handler handlers/fourcc-convert}})
+    :handler handlers/fourcc-convert}
+
+   "general-skill-render"
+   {:desc "Render a general skill template"
+    :options [["-d" "--data EDN" "EDN map of template variables" :default "{}"]]
+    :handler handlers/general-skill-render}
+
+   "generate-units"
+   {:desc "Batch generate units from names"
+    :options [["-p" "--project-dir DIR" "Project directory"]
+              ["-t" "--unit-type TYPE" "Unit type label" :default "普通"]
+              ["-n" "--names EDN" "EDN vector of unit names"]]
+    :handler handlers/generate-units}
+
+   "generate-items"
+   {:desc "Batch generate items from names"
+    :options [["-p" "--project-dir DIR" "Project directory"]
+              ["-n" "--names EDN" "EDN vector of item names"]]
+    :handler handlers/generate-items}
+
+   "generate-towers"
+   {:desc "Generate tower building abilities and items"
+    :options [["-p" "--project-dir DIR" "Project directory"]
+              ["-l" "--lni-file FILE" "Unit LNI file path"]
+              ["-i" "--tower-ids EDN" "EDN vector of tower unit IDs"]]
+    :handler handlers/generate-towers}
+
+   "generate-tasks"
+   {:desc "Batch generate task items"
+    :options [["-t" "--tasks EDN" "EDN vector of task maps"]]
+    :handler handlers/generate-tasks}})
 
 (defn- usage [subcommand]
   (let [{:keys [desc options]} (get subcommands subcommand)]
