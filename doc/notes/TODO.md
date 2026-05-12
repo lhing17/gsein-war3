@@ -75,45 +75,45 @@
 ## 阶段 3：功能逐个接入前端
 
 ### P0 — 核心功能（优先实现）
-- [ ] **BLP 图标生成器**：拖拽上传/选择图片，类型选择（主动/被动），批量处理，结果预览
+- [x] **BLP 图标生成器**：拖拽上传/选择图片，类型选择（主动/被动），批量处理，结果预览
   - 后端：`blp/generator.clj` 增加批量接口
-- [ ] **可用 ID 查询**：选择项目目录，类型选择（单位/技能/物品等），显示下 N 个可用 ID
+- [x] **可用 ID 查询**：选择项目目录，类型选择（单位/技能/物品等），显示下 N 个可用 ID
   - 后端：`lni/available_id.clj` 保持
-- [ ] **模板生成器 — 通魔技能**：表单填写参数，实时预览 LNI 文本，一键导出
+- [x] **模板生成器 — 通魔技能**：表单填写参数，实时预览 LNI 文本，一键导出
   - 后端：`tools/general_skill_generator.clj` 包装为 handler
-- [ ] **模板生成器 — 单位批量生成**：表单 + 批量输入，实时预览，导出
+- [x] **模板生成器 — 单位批量生成**：表单 + 批量输入，实时预览，导出
   - 后端：`tools/unit_generator.clj` 包装为 handler
-- [ ] **模板生成器 — 物品批量生成**：表单 + 批量输入，实时预览，导出
+- [x] **模板生成器 — 物品批量生成**：表单 + 批量输入，实时预览，导出
   - 后端：`tools/item_generator.clj` 包装为 handler
-- [ ] **模板生成器 — 塔生成（造塔技能 + 造塔物品）**：表单填写，一键生成
+- [x] **模板生成器 — 塔生成（造塔技能 + 造塔物品）**：表单填写，一键生成
   - 后端：`tools/tower_generator.clj` 包装为 handler
-- [ ] **模板生成器 — 任务/NPC/装饰物**：其他模板页面接入
+- [x] **模板生成器 — 任务/NPC/装饰物**：其他模板页面接入
   - 后端：`tools/task_item_generator.clj` 等包装为 handler
 
 ### P1 — 资源处理工具
-- [ ] **MDX BLP 路径替换**：选择 MDX 文件，输入旧/新路径，执行替换
+- [x] **MDX BLP 路径替换**：选择 MDX 文件，输入旧/新路径，执行替换
   - 后端：`mdx/converter.clj` 包装为 handler
-- [ ] **MDX 模型分类整理**：选择源目录和目标目录，执行分类，显示进度
+- [x] **MDX 模型分类整理**：选择源目录和目标目录，执行分类，显示进度
   - 后端：`mdx/classifier.clj` 包装为 handler
-- [ ] **LoadingScreen 切割**：选择图片，自动四宫格切割，导出 BLP
+- [x] **LoadingScreen 切割**：选择图片，自动四宫格切割，导出 BLP
   - 后端：`tools/image_splitter.clj` 包装为 handler
-- [ ] **头顶称号生成**：输入文字/选择图片，颜色/背景选择，生成 BLP + MDX
+- [x] **头顶称号生成**：输入文字/选择图片，颜色/背景选择，生成 BLP + MDX
   - 后端：`tools/title_generator.clj` 字体参数化改造后包装为 handler
 
 ### P2 — 辅助工具
-- [ ] **Excel 转 LNI**：选择 Excel 文件，配置列映射，预览表格，导出 LNI
+- [x] **Excel 转 LNI**：选择 Excel 文件，配置列映射，预览表格，导出 LNI
   - 后端：`tools/xls_to_lni.clj` 参数化映射后包装为 handler
-- [ ] **JASS 常量替换**：选择 JASS 目录，读取常量定义，执行字面量替换
+- [x] **JASS 常量替换**：选择 JASS 目录，读取常量定义，执行字面量替换
   - 后端：`tools/constant_replacer.clj` 包装为 handler
-- [ ] **单位圆形分布计算**：输入中心坐标、距离、数量，生成坐标列表
+- [x] **单位圆形分布计算**：输入中心坐标、距离、数量，生成坐标列表
   - 后端：`tools/unit_placer.clj` 包装为 handler
-- [ ] **文本搜索**：输入关键词，选择搜索目录，显示结果文件列表
+- [x] **文本搜索**：输入关键词，选择搜索目录，显示结果文件列表
   - 后端：`tools/text_searcher.clj` 包装为 handler
-- [ ] **进制转换工具**：FourCC / Hex / Decimal 互转页面
+- [x] **进制转换工具**：FourCC / Hex / Decimal 互转页面
   - 后端：`tools/number_base_converter.clj` 包装为 handler
 
 ### P3 — 纯前端/独立工具
-- [ ] **彩色文本生成器**：替代原 Python/Tkinter 工具，纯 Vue 组件实现（颜色选择 + `|cRRGGBBAA` 格式输出）
+- [x] **彩色文本生成器**：替代原 Python/Tkinter 工具，纯 Vue 组件实现（颜色选择 + `|cRRGGBBAA` 格式输出）
   - 无需 Clojure 后端
 
 ---
