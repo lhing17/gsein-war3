@@ -60,7 +60,26 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue'
+import { ElNotification } from 'element-plus'
 import { HomeFilled, Picture, Key, Document, Tools } from '@element-plus/icons-vue'
+import { checkJava } from './api/tauri'
+
+onMounted(async () => {
+  try {
+    const result = await checkJava()
+    if (!result.installed) {
+      ElNotification({
+        title: 'Java 运行时未检测到',
+        message: '本工具需要 Java 8 或更高版本。请访问 https://adoptium.net/ 下载并安装后重新启动应用。',
+        type: 'warning',
+        duration: 0,
+      })
+    }
+  } catch (e) {
+    // Silent fail - backend may be older version without check_java
+  }
+})
 </script>
 
 <style scoped>

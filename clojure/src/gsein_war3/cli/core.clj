@@ -179,7 +179,7 @@
 
             :else
             (let [result (handler options)]
-              (println (json/write-str result))
+              (println (json/generate-string result))
               (System/exit (if (= "ok" (:status result)) 0 1)))))
         (do (println (str "Unknown subcommand: " subcommand))
             (println (general-usage))

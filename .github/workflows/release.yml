@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Rust
+        uses: dtolnay/rust-action@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: tauri
+
+      - name: Install Leiningen
+        run: |
+          New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.lein"
+          Invoke-WebRequest -Uri "https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein.bat" -OutFile "$env:USERPROFILE\.lein\lein.bat"
+          "$env:USERPROFILE\.lein" | Out-File -FilePath $env:GITHUB_PATH -Append
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build Clojure uberjar
+        working-directory: clojure
+        run: lein uberjar
+
+      - name: Build and release Tauri app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: tauri
+          tagName: ${{ github.ref_name }}
+          releaseName: 'gsein-war3 ${{ github.ref_name }}'
+          releaseBody: |
+            ## 安装说明
+
+            1. 下载下方的 `.msi` 安装包
+            2. 双击运行安装程序
+            3. 如果系统未安装 Java，请访问 https://adoptium.net/ 下载 Java 21 LTS
+
+            ## 系统要求
+            - Windows 10 / Windows 11
+            - Java 8 或更高版本
+          releaseDraft: true
+          prerelease: false

@@ -9,6 +9,7 @@ fn main() {
             commands::call_clojure,
             commands::get_config,
             commands::set_config,
+            commands::check_java,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
