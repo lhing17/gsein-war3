@@ -7,18 +7,70 @@
         <span>项目配置</span>
       </template>
       <el-form label-width="120px">
-        <el-form-item label="项目目录">
-          <el-input v-model="config.project_dir" placeholder="请选择项目目录" />
+        <el-form-item>
+          <template #label>
+            <span class="label-with-icon">
+              <span>项目目录</span>
+              <el-tooltip content="War3 地图项目的根目录，包含地图文件与资源">
+                <el-icon class="info-icon"><Info-Filled /></el-icon>
+              </el-tooltip>
+            </span>
+          </template>
+          <el-input v-model="config.project_dir" placeholder="请选择项目目录">
+            <template #append>
+              <el-button @click="pickDirectory('project_dir')">浏览</el-button>
+            </template>
+          </el-input>
         </el-form-item>
-        <el-form-item label="工作区">
-          <el-input v-model="config.workspace" placeholder="请选择工作区" />
+
+        <el-form-item>
+          <template #label>
+            <span class="label-with-icon">
+              <span>工作区</span>
+              <el-tooltip content="用于存放中间生成文件和编辑工作区的目录">
+                <el-icon class="info-icon"><Info-Filled /></el-icon>
+              </el-tooltip>
+            </span>
+          </template>
+          <el-input v-model="config.workspace" placeholder="请选择工作区">
+            <template #append>
+              <el-button @click="pickDirectory('workspace')">浏览</el-button>
+            </template>
+          </el-input>
         </el-form-item>
-        <el-form-item label="输出目录">
-          <el-input v-model="config.out_dir" placeholder="请选择输出目录" />
+
+        <el-form-item>
+          <template #label>
+            <span class="label-with-icon">
+              <span>输出目录</span>
+              <el-tooltip content="最终生成文件（如 BLP、INI）的输出位置">
+                <el-icon class="info-icon"><Info-Filled /></el-icon>
+              </el-tooltip>
+            </span>
+          </template>
+          <el-input v-model="config.out_dir" placeholder="请选择输出目录">
+            <template #append>
+              <el-button @click="pickDirectory('out_dir')">浏览</el-button>
+            </template>
+          </el-input>
         </el-form-item>
-        <el-form-item label="临时目录">
-          <el-input v-model="config.temp_dir" placeholder="请选择临时目录" />
+
+        <el-form-item>
+          <template #label>
+            <span class="label-with-icon">
+              <span>临时目录</span>
+              <el-tooltip content="程序运行过程中临时文件的存放位置">
+                <el-icon class="info-icon"><Info-Filled /></el-icon>
+              </el-tooltip>
+            </span>
+          </template>
+          <el-input v-model="config.temp_dir" placeholder="请选择临时目录">
+            <template #append>
+              <el-button @click="pickDirectory('temp_dir')">浏览</el-button>
+            </template>
+          </el-input>
         </el-form-item>
+
         <el-form-item>
           <el-button type="primary" @click="saveConfig">保存配置</el-button>
           <el-button @click="loadConfig">加载配置</el-button>
@@ -30,6 +82,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { open } from '@tauri-apps/plugin-dialog'
+import { InfoFilled } from '@element-plus/icons-vue'
 import { useConfigStore } from '@/stores/config'
 import { ElMessage } from 'element-plus'
 
@@ -41,6 +95,13 @@ onMounted(() => {
     config.value = { ...store.config }
   })
 })
+
+async function pickDirectory(field: 'project_dir' | 'workspace' | 'out_dir' | 'temp_dir') {
+  const dir = await open({ directory: true })
+  if (dir) {
+    config.value[field] = dir
+  }
+}
 
 async function saveConfig() {
   await store.save(config.value)
@@ -61,5 +122,15 @@ async function loadConfig() {
 .config-card {
   max-width: 600px;
   margin-top: 20px;
+}
+.label-with-icon {
+  display: inline-flex;
+  align-items: center;
+}
+.info-icon {
+  margin-left: 6px;
+  color: #909399;
+  cursor: help;
+  font-size: 16px;
 }
 </style>
