@@ -15,4 +15,21 @@ pom.xml.asc
 .calva/output-window
 .calva/repl.calva-repl
 .lsp/.cache
-.clj-kondo/.cache.worktrees/
+.clj-kondo/.cache
+.worktrees/
+
+# Clojure build artifacts (in clojure/ subdir)
+clojure/target/
+clojure/.lein-*
+clojure/.nrepl-port
+clojure/classes/
+clojure/checkouts/
+
+# Tauri build artifacts
+tauri/target/
+tauri/Cargo.lock
+
+# Frontend build artifacts
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
