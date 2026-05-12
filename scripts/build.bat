@@ -15,7 +15,8 @@ if errorlevel 1 (
 
 :: Step 2: Build Tauri app
 echo [build] Building Tauri desktop app...
-cd /d "%~dp0..\tauri"
+cd /d "%~dp0..\frontend"
+call npm install
 call npm run tauri build
 if errorlevel 1 (
     echo [build] ERROR: tauri build failed
