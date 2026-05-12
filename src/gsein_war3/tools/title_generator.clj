@@ -1,6 +1,5 @@
 (ns gsein-war3.tools.title-generator
-  (:require [gsein-war3.config :as config]
-            [clojure.java.io :as jio]
+  (:require [clojure.java.io :as jio]
             [gsein-war3.mdx.converter :as converter]
             [gsein-war3.util.pinyin :as pinyin])
   (:import (org.apache.commons.io FileUtils)
@@ -11,68 +10,45 @@
            (java.awt.geom AffineTransform)
            (java.awt.font TextLayout)))
 
-(def env (config/get-config))
-
-(defn create-img [name w h color wing-file]
+(defn create-img [name w h color wing-file font-name font-size]
   (let [img (BufferedImage. w h BufferedImage/TYPE_INT_ARGB)
         g ^Graphics2D (.getGraphics img)
         bg-img (ImageIO/read wing-file)
-        ;; 背景图片缩放至wxh
-        scaled-instance (.getScaledInstance bg-img w h Image/SCALE_SMOOTH)
-
-        ]
-    ;; 画背景图片
+        scaled-instance (.getScaledInstance bg-img w h Image/SCALE_SMOOTH)]
     (.drawImage g scaled-instance 0 0 nil)
-
-    ;; 配置生成高清图片
     (.setRenderingHint g RenderingHints/KEY_ANTIALIASING RenderingHints/VALUE_ANTIALIAS_ON)
     (.setRenderingHint g RenderingHints/KEY_STROKE_CONTROL RenderingHints/VALUE_STROKE_PURE)
     (.setRenderingHint g RenderingHints/KEY_COLOR_RENDERING RenderingHints/VALUE_COLOR_RENDER_QUALITY)
-
-    ;; 设置编辑区域
     (.setClip g 0 0 w h)
-
-    (let [;; 计算画笔起点坐标（称号文字居中）
-          clip (.getClipBounds g)
-          font (Font. "方正颜宋简体_粗" Font/PLAIN 40)
+    (let [clip (.getClipBounds g)
+          font (Font. font-name Font/PLAIN font-size)
           fm (.getFontMetrics g font)
           ascent (.getAscent fm)
           descent (.getDescent fm)
           str-width (.stringWidth fm name)
           x (/ (- (.getWidth clip) str-width) 2)
           y (+ (/ (- (.getHeight clip) ascent descent) 2) ascent)
-          ;; 描边
           frc (.getFontRenderContext g)
           tl (TextLayout. name font frc)
           tx (AffineTransform/getTranslateInstance x y)
           sha (.getOutline tl tx)]
-
-      ;; 设置字体
       (.setFont g font)
-
-
       (.setPaint g color)
-      ;; 描边粗细
       (.setStroke g (BasicStroke. 5))
       (.draw g sha)
-
-      ;; 填充字体为白色
       (.setColor g Color/WHITE)
       (.fill g sha)
-
       (.dispose g)
+      img)))
 
-     img)))
+(defn create-img-default [name w h color wing-file]
+  (create-img name w h color wing-file "方正颜宋简体_粗" 40))
 
 (defn create-blp! [name out w h color wing-file]
-  (let [img (create-img name w h color wing-file)]
-    ;; 输出blp图片
+  (let [img (create-img-default name w h color wing-file)]
     (ImageIO/write img "blp" out)))
 
-
-
-
-(defn- delete-files-in-dir 
+(defn- delete-files-in-dir
   "删除指定目录下的所有文件"
   [^File dir]
   (let [files (file-seq dir)]
@@ -80,25 +56,25 @@
       (when (and (.exists file) (.isFile file))
         (FileUtils/delete file)))))
 
-;; 一键生成头顶称号
-(defn generate-title! [name color wing-file out-dir]
+(defn generate-title!
+  "一键生成头顶称号"
+  [name color wing-file out-dir & {:keys [template-mdx-path old-texture-path font-name font-size]
+                                   :or   {template-mdx-path "mdx/template.mdx"
+                                          old-texture-path  "war3mapImported\\kangkang.blp"
+                                          font-name         "方正颜宋简体_粗"
+                                          font-size         40}}]
   (let [eng-name (pinyin/get-pinyin-name name)
         blp-file (jio/file out-dir "temp" (str eng-name ".blp"))
         blp-parent (.getParentFile blp-file)
-        template-mdx (jio/file (jio/resource "mdx/template.mdx"))
+        template-mdx (jio/file (jio/resource template-mdx-path))
         mdx-file (jio/file out-dir "temp" (str eng-name ".mdx"))]
     (println (.getAbsolutePath blp-parent))
-    ;; 如果目录不存在，则创建目录
     (.mkdirs blp-parent)
-    ;; 删除临时文件
     (delete-files-in-dir blp-parent)
-
-    ;; 生成blp图片
-    (create-blp! name blp-file 256 128 color wing-file)
-
-    ;; 生成mdx文件并替换贴图
+    (let [img (create-img name 256 128 color wing-file font-name font-size)]
+      (ImageIO/write img "blp" blp-file))
     (FileUtils/copyFile template-mdx mdx-file)
-    (converter/replace-blp mdx-file "war3mapImported\\kangkang.blp" (.getName blp-file))))
+    (converter/replace-blp mdx-file old-texture-path (.getName blp-file))))
 
 (defn- get-scaled-image [^BufferedImage img w h]
   (let [scaled-instance (.getScaledInstance img w h Image/SCALE_SMOOTH)
@@ -110,29 +86,26 @@
 
 (defn get-file-pinyin-name-without-extension [^File file]
   (let [name (.getName file)
-        raw-name (subs name 0  (.lastIndexOf name "."))]
+        raw-name (subs name 0 (.lastIndexOf name "."))]
     (pinyin/get-pinyin-name raw-name)))
 
-(defn generate-title-with-image! [img blp-name out-dir]
+(defn generate-title-with-image!
+  [img blp-name out-dir & {:keys [template-mdx-path old-texture-path]
+                           :or   {template-mdx-path "mdx/template.mdx"
+                                  old-texture-path  "war3mapImported\\kangkang.blp"}}]
   (let [blp-file (jio/file out-dir "temp" (str blp-name ".blp"))
         blp-parent (.getParentFile blp-file)
-        template-mdx (jio/file (jio/resource "mdx/template.mdx"))
+        template-mdx (jio/file (jio/resource template-mdx-path))
         mdx-file (jio/file out-dir "temp" (str blp-name ".mdx"))
         buffered-img (get-scaled-image (ImageIO/read (jio/file img)) 256 128)]
-    ;; 如果目录不存在，则创建目录
     (.mkdirs blp-parent)
-    ;;; 删除临时文件
-    ;(delete-files-in-dir blp-parent)
-
-    ;; 生成blp图片
     (ImageIO/write buffered-img "blp" blp-file)
-
-    ;; 生成mdx文件并替换贴图
     (FileUtils/copyFile template-mdx mdx-file)
-    (converter/replace-blp mdx-file "war3mapImported\\kangkang.blp" (.getName blp-file))))
+    (converter/replace-blp mdx-file old-texture-path (.getName blp-file))))
 
 (comment
-  (generate-title! "领取福利" Color/BLUE (jio/file (jio/resource "images/background/3.png")) (:out-dir env))
+  (def out-dir "D:/IdeaProjects/small/out")
+  (generate-title! "领取福利" Color/BLUE (jio/file (jio/resource "images/background/3.png")) out-dir)
   (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/主线历练.png" "ch_zhuxian" "D:/IdeaProjects/jzjh2/out")
   (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/场景传送.png" "ch_changjing" "D:/IdeaProjects/jzjh2/out")
   (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/副本传送.png" "ch_fuben" "D:/IdeaProjects/jzjh2/out")
@@ -150,7 +123,6 @@
   (generate-title-with-image! "D:\\IdeaProjects\\europe\\resources\\头顶称号\\无奸不商.png" "ch_jianshang" "D:/IdeaProjects/europe/out")
   (generate-title-with-image! "D:\\IdeaProjects\\europe\\resources\\头顶称号\\酸菜亦菲.png" "ch_suancai" "D:/IdeaProjects/jzjh-reborn/out")
 
-
   (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/新建文件夹/购买武器.png" "ch_wuqi" "D:/IdeaProjects/jzjh2/out")
   (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/新建文件夹/精英挑战.png" "ch_tiaozhan" "D:/IdeaProjects/jzjh2/out")
   (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/新建文件夹/科技升级.png" "ch_keji" "D:/IdeaProjects/jzjh2/out")
@@ -162,9 +134,9 @@
   (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/新建文件夹/领取福利.png" "ch_fuli" "D:/IdeaProjects/jzjh2/out")
   (generate-title-with-image! "D:/IdeaProjects/jzjh2/resources/新建文件夹/武器熔炼.png" "ch_ronglian" "D:/IdeaProjects/jzjh2/out")
 
-(doseq [file (file-seq (jio/file "D:\\IdeaProjects\\JZJH\\resources\\头顶称号\\png"))]
-  (when (.isFile file)
-    (generate-title-with-image! (.getAbsolutePath file) (get-file-pinyin-name-without-extension file) (:out-dir env))))
+  (doseq [file (file-seq (jio/file "D:\\IdeaProjects\\JZJH\\resources\\头顶称号\\png"))]
+    (when (.isFile file)
+      (generate-title-with-image! (.getAbsolutePath file) (get-file-pinyin-name-without-extension file) out-dir)))
 
   (get-file-pinyin-name-without-extension (jio/file "D:\\IdeaProjects\\jzjh-reborn\\out\\temp\\lingqifu.blp"))
 
@@ -173,8 +145,6 @@
                "了然於胸" "略有大成" "已有大成" "豁然贯通" "非比寻常" "出类拔萃" "罕有敌手" "技冠群雄" "神乎其技" "出神入化" "傲视群雄"
                "登峰造极" "无与伦比" "所向披靡" "一代宗师" "精深奥妙" "神功盖世" "举世无双" "惊世骇俗" "撼天动地" "震古铄今" "超凡入圣"
                "威镇寰宇" "空前绝后" "天人合一" "深藏不露" "深不可测" "返璞归真"])
-  (doseq [v  (map-indexed vector titles)]
-    (ImageIO/write (create-img (second v) 64 64 (Color. 0x312B43) (jio/file (jio/resource (str "images/wing" (inc (quot (first v) 10)) ".png")))) "png" (jio/file "D:\\tmp\\out" (str "title" (first v) ".png")))
-    )
-
+  (doseq [v (map-indexed vector titles)]
+    (ImageIO/write (create-img-default (second v) 64 64 (Color. 0x312B43) (jio/file (jio/resource (str "images/wing" (inc (quot (first v) 10)) ".png")))) "png" (jio/file "D:\\tmp\\out" (str "title" (first v) ".png"))))
   ,)

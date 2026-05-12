@@ -20,7 +20,7 @@
   )
 
 ; 读取一个文件中的所有常量
-(defn- read-constants [file]
+(defn read-constants [file]
   (->> (jio/reader file)
        (line-seq)
        (filter starts-with-constant)

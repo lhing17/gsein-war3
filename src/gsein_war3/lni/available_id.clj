@@ -1,10 +1,7 @@
 (ns gsein-war3.lni.available-id
   (:require [clojure.java.io :as jio]
-            [clojure.string :as str]
-            [gsein-war3.config :as config]))
+            [clojure.string :as str]))
 
-
-(def env (config/get-config))
 
 (defn- available? [id current-ids]
   (not-any? #(= (str/lower-case id) (str/lower-case %)) current-ids))
@@ -84,7 +81,7 @@
   (->> (iterate next-id "A000")
        (filter #(available? % ((project-id-producer project-dir) :ability)))
        (take 5))
-  (def project-dir (:project-dir env))
+  (def project-dir "D:/IdeaProjects/small/small")
   ((project-id-producer project-dir) :ability)
   (get-available-ids 5 (project-id-producer project-dir) :item)
   (get-available-id (project-id-producer project-dir) :item)

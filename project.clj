@@ -28,5 +28,7 @@
                  [org.clojure/tools.cli "1.1.230"]
                  ]
   :repositories [["jitpack" "https://jitpack.io"]]
+  :main gsein-war3.cli.core
+  :aot [gsein-war3.cli.core]
   :repl-options {:init-ns gsein-war3.core
                  :nrepl-middleware [vlaaad.reveal.nrepl/middleware]})
