@@ -14,34 +14,34 @@
 - [x] `lein uberjar` 验证构建成功
 
 ### 1.2 解耦全局硬编码配置
-- [ ] `src/gsein_war3/config.clj`：移除所有命名空间顶层的 `(def env (config/get-config))`
-- [ ] `src/gsein_war3/config.clj`：改为函数参数传入配置，或废弃全局读取
-- [ ] `resources/config.edn`：删除硬编码 Windows 绝对路径
-- [ ] 全局排查：确保所有函数改为显式接收 `project-dir`、`out-dir`、`temp-dir` 参数
+- [x] `src/gsein_war3/config.clj`：移除所有命名空间顶层的 `(def env (config/get-config))`
+- [x] `src/gsein_war3/config.clj`：改为函数参数传入配置，或废弃全局读取
+- [x] `resources/config.edn`：删除硬编码 Windows 绝对路径
+- [x] 全局排查：确保所有函数改为显式接收 `project-dir`、`out-dir`、`temp-dir` 参数
 
 ### 1.3 参数化高耦合模块
-- [ ] `src/gsein_war3/blp/generator.clj`：`generate-blps` 增加 `out-dir` 参数，移除对全局 `env` 的依赖
-- [ ] `src/gsein_war3/lni/available_id.clj`：`project-id-producer` 改为纯函数，接收 `project-dir` 参数
-- [ ] `src/gsein_war3/tools/title_generator.clj`：硬编码字体 `"方正颜宋简体_粗"` 改为 `font-path` 参数传入
-- [ ] `src/gsein_war3/tools/xls_to_lni.clj`：将 `default-hp-map`、`default-def-map` 等硬编码映射提取为外部 EDN 配置或函数参数
+- [x] `src/gsein_war3/blp/generator.clj`：`generate-blps` 增加 `temp-dir` / `project-dir` 参数，移除对全局 `env` 的依赖
+- [x] `src/gsein_war3/lni/available_id.clj`：`project-id-producer` 改为纯函数，接收 `project-dir` 参数
+- [x] `src/gsein_war3/tools/title_generator.clj`：硬编码字体 `"方正颜宋简体_粗"` 改为 `font-name` / `font-size` 参数传入
+- [x] `src/gsein_war3/tools/xls_to_lni.clj`：将 `default-hp-map`、`default-def-map` 等硬编码映射提取为动态 var 与函数参数
 
 ### 1.4 新增 CLI 统一入口
-- [ ] 新增 `src/gsein_war3/cli/core.clj`：使用 `clojure.tools.cli` 实现 `-main`，子命令分发
-- [ ] 新增 `src/gsein_war3/cli/handlers.clj`：各功能标准化 handler（接收 EDN/JSON map，返回结果 map）
-- [ ] CLI handler：`blp-generate` — BLP 图标生成
-- [ ] CLI handler：`available-ids` — 可用 ID 查询
-- [ ] CLI handler：`lni-read` / `lni-write` — LNI 文件读写
-- [ ] CLI handler：`mdx-replace-blp` — MDX 贴图路径替换
-- [ ] CLI handler：`mdx-classify` — MDX 模型分类整理
-- [ ] CLI handler：`template-render` — Selmer 模板批量渲染（单位/物品/技能/塔等）
-- [ ] CLI handler：`xls-to-lni` — Excel 转 LNI
-- [ ] CLI handler：`title-generate` — 头顶称号生成
-- [ ] CLI handler：`image-split` — 图片切割
-- [ ] CLI handler：`constant-replace` — JASS 常量替换
-- [ ] CLI handler：`text-search` — 文本搜索
-- [ ] CLI handler：`unit-place` — 单位圆形分布计算
-- [ ] CLI handler：`fourcc-convert` — 进制转换
-- [ ] 端到端验证：`java -jar target/gsein-war3.jar blp-generate --input-file test.png --type active --out-dir ./out`
+- [x] 新增 `src/gsein_war3/cli/core.clj`：使用 `clojure.tools.cli` 实现 `-main`，子命令分发
+- [x] 新增 `src/gsein_war3/cli/handlers.clj`：各功能标准化 handler（接收 options map，返回结果 map）
+- [x] CLI handler：`blp-generate` — BLP 图标生成
+- [x] CLI handler：`available-ids` — 可用 ID 查询
+- [x] CLI handler：`lni-read` / `lni-write` — LNI 文件读写
+- [x] CLI handler：`mdx-replace-blp` — MDX 贴图路径替换
+- [x] CLI handler：`mdx-classify` — MDX 模型分类整理
+- [x] CLI handler：`template-render` — Selmer 模板批量渲染（单位/物品/技能/塔等）
+- [x] CLI handler：`xls-to-lni` — Excel 转 LNI
+- [x] CLI handler：`title-generate` — 头顶称号生成
+- [x] CLI handler：`image-split` — 图片切割
+- [x] CLI handler：`constant-replace` — JASS 常量替换
+- [x] CLI handler：`text-search` — 文本搜索
+- [x] CLI handler：`unit-place` — 单位圆形分布计算
+- [x] CLI handler：`fourcc-convert` — 进制转换
+- [x] 端到端验证：`java -jar target/...-standalone.jar <subcommand> [options]` 通过
 
 ---
 
