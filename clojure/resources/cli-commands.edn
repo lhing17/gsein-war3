@@ -107,4 +107,9 @@
 
  :generate-tasks
  {:desc "Batch generate task items"
-  :options [["-t" "--tasks EDN" "EDN vector of task maps"]]}}
+  :options [["-t" "--tasks EDN" "EDN vector of task maps"]]}
+
+ :rebuild-listfile
+ {:desc "Rebuild a (listfile) from a directory tree"
+  :options [["-r" "--root-dir DIR" "Root directory to scan"]
+            ["-o" "--out-file FILE" "Output listfile path" :default "(listfile)"]]}}

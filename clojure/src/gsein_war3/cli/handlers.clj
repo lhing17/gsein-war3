@@ -22,7 +22,8 @@
             [gsein-war3.tools.unit-generator :as unit-gen]
             [gsein-war3.tools.item-generator :as item-gen]
             [gsein-war3.tools.tower-generator :as tower-gen]
-            [gsein-war3.tools.task-item-generator :as task-gen])
+            [gsein-war3.tools.task-item-generator :as task-gen]
+            [gsein-war3.tools.rebuild-listfile :as rebuild])
   (:import (java.io File)
            (java.awt Color)
            (javax.imageio ImageIO)))
@@ -359,3 +360,13 @@
       (error-response "--tasks is required (EDN vector)")
       :else
       (success-response (task-gen/generate-tasks tasks)))))
+
+(defhandler rebuild-listfile [opts]
+  (let [root-dir (:root-dir opts)
+        out-file (:out-file opts "(listfile)")]
+    (cond
+      (not (file-exists? root-dir))
+      (error-response (str "Root directory not found: " root-dir))
+      :else
+      (let [result (rebuild/rebuild-listfile root-dir out-file)]
+        (success-response {:out-file out-file :count (count result)})))))

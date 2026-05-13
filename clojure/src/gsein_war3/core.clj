@@ -21,6 +21,7 @@
             [gsein-war3.tools.item-generator :as item-gen]
             [gsein-war3.tools.tower-generator :as tower-gen]
             [gsein-war3.tools.task-item-generator :as task-gen]
+            [gsein-war3.tools.rebuild-listfile :as rebuild]
             [gsein-war3.config :as config])
   (:import (java.awt Color)))
 
@@ -59,6 +60,7 @@
 (def generate-towers tower-gen/generate-tower-building-ability)
 (def generate-tower-items tower-gen/generate-tower-building-item)
 (def generate-tasks task-gen/generate-tasks)
+(def rebuild-listfile rebuild/rebuild-listfile)
 
 ;; ---------- 配置 ----------
 

@@ -12,4 +12,5 @@
     (is (fn? core/unit-placer))
     (is (fn? core/xls->map))
     (is (fn? core/get-config))
-    (is (fn? core/get-config-or-default))))
+    (is (fn? core/get-config-or-default))
+    (is (fn? core/rebuild-listfile))))
