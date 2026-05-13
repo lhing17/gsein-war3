@@ -1,10 +1,14 @@
 (ns gsein-war3.tools.item-generator
   (:require [clojure.string :as str]
-            [gsein-war3.lni.available-id :as aid]
             [selmer.parser :as sp]))
 
-
-(def tpl "[{{id}}]\n_parent = \"prvt\"\n-- 名字\nName = \"{{name}}\"\n-- 可以被抵押\npawnable = 0\n")
+(def tpl "[{{id}}]
+_parent = \"{{parent}}\"
+-- 名字
+Name = \"{{name}}\"
+-- 可以被抵押
+pawnable = {{pawnable}}
+")
 
 (def names
   [
@@ -59,8 +63,3 @@
    "|cFFFF0000【神话】飞越天际|r"
    "|cFFFF0000【神话】流星追击|r"
    ])
-
-(comment
-  (def ids (aid/get-available-ids (count names) (aid/project-id-producer "D:/IdeaProjects/europe/europe") :item "I000"))
-  (spit "a.txt" (str/join "\n"(map #(sp/render tpl {:id % :name %2}) ids names)))
-  )

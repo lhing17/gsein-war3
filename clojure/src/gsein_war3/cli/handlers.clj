@@ -280,7 +280,7 @@
       (err "--names is required (EDN vector)")
       :else
       (let [ids (aid/get-available-ids (count names) (aid/project-id-producer project-dir) :item)
-            items (map #(hash-map :id %1 :name %2) ids names)]
+            items (map #(hash-map :id %1 :name %2 :parent "prvt" :pawnable 0) ids names)]
         (ok (->> items
                  (map #(sp/render item-gen/tpl %))
                  (str/join "\n")))))))

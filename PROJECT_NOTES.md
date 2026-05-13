@@ -10,3 +10,4 @@
 - 重构 `blp/generator.clj`（#8）：重命名 `map-deal-image!`→`apply-processors`、`generate-blps`→`generate-blps!`；提取 War3 路径常量；简化 `get-project-target-dir` 为字符串操作；清理大量 REPL 示例 comment 块；CLI 验证 BLP 生成正常
 - 修复 `lni/reader.clj`（#14）：修复文件以空行/注释开头时的 `StringIndexOutOfBoundsException` 崩溃；将 `an-alias` 改为 `ordered`；换行符拼接改用 `System/lineSeparator`；`read-lni` 添加文件存在性检查；CLI 验证空文件与注释开头文件均正常解析
 - 修复 `mdx/classifier.clj`（#16）：修复 move 模式下复制失败仍删除源文件的数据丢失 bug（将删除操作移入 try 块）；复制前自动创建目标目录（`.mkdirs`）；清理 REPL 示例 comment 块
+- 修复 `tools/item_generator.clj`（#22）：移除未使用的 `gsein-war3.lni.available-id` require；模板参数化 `_parent` 和 `pawnable`（默认值保持向后兼容）；清理不安全的 `(spit "a.txt" ...)` comment 块；CLI 验证生成正常
