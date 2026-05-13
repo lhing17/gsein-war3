@@ -16,6 +16,7 @@
             [gsein-war3.tools.text-searcher :as txt-search]
             [gsein-war3.tools.unit-placer :as unit-plc]
             [gsein-war3.tools.number-base-converter :as nbc]
+            [gsein-war3.xls.reader :as xls-reader]
             [gsein-war3.tools.xls-to-lni :as xls]
             [gsein-war3.tools.general-skill-generator :as gskill]
             [gsein-war3.tools.unit-generator :as unit-gen]
@@ -147,7 +148,7 @@
       (str/blank? sheet)
       (err "--sheet is required")
       :else
-      (ok (xls/xls->obj xls-file sheet columns)))))
+      (ok (xls-reader/xls->map xls-file sheet columns)))))
 
 (defhandler title-generate [opts]
   (let [name (:name opts)

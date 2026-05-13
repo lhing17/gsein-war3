@@ -12,3 +12,4 @@
 - 修复 `mdx/classifier.clj`（#16）：修复 move 模式下复制失败仍删除源文件的数据丢失 bug（将删除操作移入 try 块）；复制前自动创建目标目录（`.mkdirs`）；清理 REPL 示例 comment 块
 - 修复 `tools/item_generator.clj`（#22）：移除未使用的 `gsein-war3.lni.available-id` require；模板参数化 `_parent` 和 `pawnable`（默认值保持向后兼容）；清理不安全的 `(spit "a.txt" ...)` comment 块；CLI 验证生成正常
 - 修复 `tools/tower_generator.clj`（#28）：新增 `strip-quotes` 安全去除首尾引号，修复 `subs` 无边界检查导致的 `StringIndexOutOfBoundsException`；移除硬编码 `tower-ids`；清理 REPL 示例 comment 块；同步更新 handler 使用安全函数；CLI 验证生成正常
+- 重构 `xls/reader.clj` 与 `tools/xls_to_lni.clj`（#34）：消除 `xls->map` 与 `xls->obj` 功能重复，移除命名空间级 `def column-map`/`def xls-file` 污染；`xls->map` 新增 docstring 与输入校验（文件存在性、sheet 存在性、列映射非空）；`tools/xls_to_lni` 改为依赖 `xls-reader/xls->map`；CLI handler 同步更新；构建验证通过

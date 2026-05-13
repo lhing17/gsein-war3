@@ -1,16 +1,11 @@
 (ns gsein-war3.tools.xls-to-lni
-  (:require [dk.ative.docjure.spreadsheet :refer [load-workbook-from-file select-columns select-sheet]]
-            [selmer.parser :as sp]
+  (:require [selmer.parser :as sp]
             [clojure.java.io :as jio]
             [gsein-war3.lni.available-id :as aid]
             [gsein-war3.util.pinyin :as pinyin]
             [clojure.string :as str]
-            [flatland.ordered.map :as fom]))
-
-(defn xls->obj [xls-file sheet-name column-map]
-  (->> (load-workbook-from-file xls-file)
-       (select-sheet sheet-name)
-       (select-columns column-map)))
+            [flatland.ordered.map :as fom]
+            [gsein-war3.xls.reader :as xls-reader]))
 
 (defn get-base-attrs [obj attr-map]
   (->> (map (fn [kv]
@@ -132,7 +127,7 @@
                    :AC :mp-regen
 
                    })
-  (def objs (xls->obj xls-file sn column-map))
+  (def objs (xls-reader/xls->map xls-file sn column-map))
   (def add-hps (->> (map :hp objs)
                     (filter identity)
                     (drop 2)
