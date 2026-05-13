@@ -77,7 +77,10 @@
   (fn ^String [image name out-dir opts]
     (println (str "name: " name ", out-dir: " out-dir ", opts: " opts))
     (let [border (img/add-border (adjust-image-fn image) type opts)]
-      (img/output-as-blp border (dir-fn out-dir) (pinyin/get-pinyin-name name) prefix))))
+      (let [base-name (if (.contains name ".")
+                        (subs name 0 (.lastIndexOf name "."))
+                        name)]
+        (img/output-as-blp border (dir-fn out-dir) (pinyin/get-pinyin-name base-name) prefix)))))
 
 (defn- output-blp-fn
   "根据类型获取输出blp的函数"
