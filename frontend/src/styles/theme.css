@@ -1,0 +1,69 @@
+:root {
+  /* War3 Dark Theme - Base Palette */
+  --gw-bg-deep: #070b14;
+  --gw-bg-base: #0d111c;
+  --gw-bg-surface: #131929;
+  --gw-bg-elevated: #1a2133;
+  --gw-bg-hover: #222b3f;
+
+  /* War3 Fantasy Accents */
+  --gw-accent-gold: #c9a227;
+  --gw-accent-gold-light: #e8c547;
+  --gw-accent-cyan: #4ecdc4;
+  --gw-accent-magic: #7b68ee;
+  --gw-accent-danger: #e74c3c;
+  --gw-accent-success: #2ecc71;
+  --gw-accent-warning: #f39c12;
+
+  /* Text Colors */
+  --gw-text-primary: #e8ecf1;
+  --gw-text-secondary: #9aa3b2;
+  --gw-text-muted: #5c6575;
+  --gw-text-inverse: #070b14;
+
+  /* Borders */
+  --gw-border-subtle: rgba(255, 255, 255, 0.06);
+  --gw-border-default: rgba(255, 255, 255, 0.1);
+  --gw-border-active: rgba(201, 162, 39, 0.4);
+
+  /* Shadows */
+  --gw-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --gw-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --gw-shadow-glow: 0 0 12px rgba(201, 162, 39, 0.15);
+
+  /* Spacing Scale */
+  --gw-sidebar-width: 220px;
+  --gw-header-height: 56px;
+}
+
+/* Global Overrides for ElementPlus Dark */
+html.dark {
+  color-scheme: dark;
+}
+
+html, body, #app {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--gw-bg-deep);
+  color: var(--gw-text-primary);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gw-border-default);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gw-text-muted);
+}

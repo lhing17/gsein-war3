@@ -1,11 +1,17 @@
 <template>
   <el-container class="app-container">
-    <el-aside width="220px" class="sidebar">
-      <div class="logo">gsein-war3</div>
+    <el-aside width="var(--gw-sidebar-width)" class="sidebar">
+      <div class="logo">
+        <span class="logo-icon">GW</span>
+        <span class="logo-text">gsein-war3</span>
+      </div>
       <el-menu
         :default-active="$route.path"
         router
         class="menu"
+        background-color="transparent"
+        text-color="var(--gw-text-secondary)"
+        active-text-color="var(--gw-accent-gold)"
       >
         <el-menu-item index="/">
           <el-icon><HomeFilled /></el-icon>
@@ -50,7 +56,8 @@
     </el-aside>
     <el-container>
       <el-header class="header">
-        <span>Warcraft 3 地图开发工具</span>
+        <span class="header-title">Warcraft 3 地图开发工具</span>
+        <div class="header-accent"></div>
       </el-header>
       <el-main class="main">
         <router-view />
@@ -85,30 +92,81 @@ onMounted(async () => {
 <style scoped>
 .app-container {
   height: 100vh;
+  background-color: var(--gw-bg-deep);
 }
 .sidebar {
-  background: #f5f7fa;
-  border-right: 1px solid #e4e7ed;
+  background: linear-gradient(180deg, var(--gw-bg-base) 0%, var(--gw-bg-deep) 100%);
+  border-right: 1px solid var(--gw-border-default);
 }
 .logo {
-  height: 60px;
+  height: var(--gw-header-height);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  font-size: 18px;
-  border-bottom: 1px solid #e4e7ed;
+  gap: 10px;
+  border-bottom: 1px solid var(--gw-border-default);
+  background: rgba(0, 0, 0, 0.2);
+}
+.logo-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--gw-accent-gold) 0%, var(--gw-accent-gold-light) 100%);
+  color: var(--gw-text-inverse);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  box-shadow: var(--gw-shadow-glow);
+}
+.logo-text {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--gw-text-primary);
+  letter-spacing: 0.3px;
 }
 .menu {
   border-right: none;
+  --el-menu-bg-color: transparent;
+  --el-menu-hover-bg-color: var(--gw-bg-hover);
+  --el-menu-item-height: 46px;
+}
+.menu :deep(.el-menu-item.is-active) {
+  background: linear-gradient(90deg, rgba(201, 162, 39, 0.12) 0%, transparent 100%);
+  border-left: 3px solid var(--gw-accent-gold);
+}
+.menu :deep(.el-sub-menu__title:hover) {
+  background-color: var(--gw-bg-hover);
 }
 .header {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #e4e7ed;
-  font-weight: 500;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--gw-border-default);
+  background: var(--gw-bg-base);
+  box-shadow: var(--gw-shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+.header-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--gw-text-primary);
+  letter-spacing: 0.3px;
+}
+.header-accent {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 120px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gw-accent-gold) 0%, transparent 100%);
+  opacity: 0.6;
 }
 .main {
-  background: #fff;
+  background: var(--gw-bg-deep);
+  color: var(--gw-text-primary);
 }
 </style>
