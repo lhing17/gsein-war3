@@ -23,3 +23,4 @@
 - 重构 `mdx/parser.clj`（#18）：修复 `parse` 资源泄漏（将整个解析逻辑移入 try）；统一返回值为向量；`parse-content` 修复 `:else` 分支丢弃 `rs` 的 bug，使用 `into` 累积 TEXS 结果；`parse-textures` 改用 `conj` 保持正序；`read-str` 增加截断检测；提取 `chunk-keyword-size`/`texture-path-len` 常量；构建与测试通过
 - 重构 `tools/constant_replacer.clj`（#19）：`read-constants` 使用 `with-open` 修复资源泄漏；`replace-literal-with-constant` 按 key 长度降序排序避免误匹配；放宽正则支持任意类型名；`literal-counter` 改用 `fnil`；`keep-chinese` 提取 Unicode 常量；`to-pinyin` 改用 `str/upper-case`；清理过长 comment 块；构建与测试通过
 - 重构 `tools/general_skill_generator.clj`（#20）：将硬编码数据迁移到 `resources/general-skill-config.edn`；提供 `load-config` 与 `cached-config` 支持热加载；新增 `valid-target-type?` 和 `valid-flag?` 验证函数；配置文件中注明数据来源与适用版本；清理空 comment 块；构建与测试通过
+- 重构 `tools/image_splitter.clj`（#21）：`scale` 使用 try/finally 确保 Graphics 释放；`write-image` 增加 names/parts 长度校验；`ImageIO/write` 返回值检查；`make-rectangle` 单参数改为 `[width height]`；`split-rectangle` 增加方向断言；`image` record 简化为 plain map；构建与测试通过
