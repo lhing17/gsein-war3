@@ -9,3 +9,4 @@
 - 推进暗色主题视觉升级（#6）：建立全局页面布局系统（统一页头装饰下划线、段落排版、卡片阴影层级），构建验证通过
 - 重构 `blp/generator.clj`（#8）：重命名 `map-deal-image!`→`apply-processors`、`generate-blps`→`generate-blps!`；提取 War3 路径常量；简化 `get-project-target-dir` 为字符串操作；清理大量 REPL 示例 comment 块；CLI 验证 BLP 生成正常
 - 修复 `lni/reader.clj`（#14）：修复文件以空行/注释开头时的 `StringIndexOutOfBoundsException` 崩溃；将 `an-alias` 改为 `ordered`；换行符拼接改用 `System/lineSeparator`；`read-lni` 添加文件存在性检查；CLI 验证空文件与注释开头文件均正常解析
+- 修复 `mdx/classifier.clj`（#16）：修复 move 模式下复制失败仍删除源文件的数据丢失 bug（将删除操作移入 try 块）；复制前自动创建目标目录（`.mkdirs`）；清理 REPL 示例 comment 块
