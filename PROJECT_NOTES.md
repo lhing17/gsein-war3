@@ -18,3 +18,4 @@
 - 重构 `config.clj`（#11）：`get-config` 增加异常处理（文件缺失、EDN 语法错误均给出友好提示）；新增 `get-config-or-default` 在缺失时返回空 map；使用 `with-open` 确保流关闭；构建验证通过
 - 重构 `core.clj`（#12）：为核心命名空间添加 docstring，重新导出各子模块最常用的公共 API（BLP 生成、LNI 读写、MDX 处理、批量生成器等）；补充常用颜色常量；更新 core-test 验证导出；构建与测试通过
 - 重构 `lni/available_id.clj`（#13）：修复 `next-id` 溢出崩溃隐患（ID 空间耗尽时抛出友好异常）；`next-char` 消除魔法数字；`inc-by-index` 改用 `StringBuilder` 避免中间集合；`available?` 预转小写 set 实现 O(1) 查询；`project-id-producer` 使用 `memoize` 缓存避免重复读文件；`get-available-ids` 预计算 ID 集合；新增 5 个单元测试覆盖边界情况；构建与测试通过
+- 重构 `lni/writer.clj`（#15）：`write-chunk-body`/`write-chunk` 改用 `str/join`+`map` 替代低效的 `mapcat`+`apply str`；删除重复的 `update-hp`，统一使用 `update-attr`；`write-lni` 自动创建父目录；将 comment 块专用 require 移入 comment；构建与测试通过

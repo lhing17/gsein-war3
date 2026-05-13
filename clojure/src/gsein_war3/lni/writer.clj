@@ -1,48 +1,32 @@
 (ns gsein-war3.lni.writer
-  (:require
-    [clojure.string :as str]
-    [gsein-war3.lni.available-id :as aid]
-    [gsein-war3.lni.reader :as reader]
-))
+  (:require [clojure.java.io :as jio]
+            [clojure.string :as str]))
 
 (defn- write-chunk-body [chunk-body]
-  ;; 将chunk的body写入文件
-  (let [ write-kv (fn [[k v]]
-                   (str k " = " v "\n"))]
-    (->> chunk-body
-         (mapcat write-kv)
-         (apply str))))
+  (str/join (map (fn [[k v]] (str k " = " v "\n")) chunk-body)))
 
 (defn- write-chunk [chunk]
-  ;; 将chunk写入文件
-  (let [write-id (fn [id]
-                   (str "[" id "]\n"))
-        write-body (fn [body]
-                     (write-chunk-body body))]
-    (->> chunk
-         (mapcat (fn [[id body]]
-                   (concat [(write-id id)] [(write-body body)])))
-         (apply str))))
+  (str/join (map (fn [[id body]]
+                    (str "[" id "]\n" (write-chunk-body body)))
+                  chunk)))
 
 (defn write-lni [lni-file chunk]
-  ;; 将chunk写入lni文件
-  (spit lni-file (write-chunk chunk)))
-
-(defn- update-hp [m f]
-  ;; 更新hp
-  (let [hp (get m "HP")]
-    (if (nil? hp) m
-                  (assoc m "HP" (f hp)))))
+  "将 chunk 写入 lni 文件。若父目录不存在则自动创建。"
+  (let [file (jio/file lni-file)]
+    (when-let [parent (.getParentFile file)]
+      (.mkdirs parent))
+    (spit file (write-chunk chunk))))
 
 (defn- update-attr [m f k]
-  ;; 更新攻击力
+  "更新指定 key 的属性值"
   (let [attr (get m k)]
     (if (nil? attr) m
                     (assoc m k (f attr)))))
 
-
-
 (comment
+  (require '[gsein-war3.lni.available-id :as aid]
+           '[gsein-war3.lni.reader :as reader])
+
   (def mobs ["h005" "u000" "h006" "e002" "o004" "u001" "n00H" "h007" "z000" "z001" "u002"
              "o005" "n02T" "e003" "n00J" "u003" "e004" "e005" "u004" "n00K" "e006" "u005"
              "h008" "h009" "n00L" "n00M" "n00N" "n00O" "n00P" "n00Q" "u006" "o008" "h00A"
@@ -50,62 +34,9 @@
              "n00X" "n02U" "n02V" "n02W" "n02X" "n02Y" "n02Z" "n030" "n031" "n032" "n033"])
   (def lni (reader/read-lni "D:\\IdeaProjects\\jztd-reborn\\jztd\\table\\unit.ini"))
   (merge lni
-         (update-vals (select-keys lni mobs) #(update-hp % (fn [hp] (str (int (* 0.7 (Integer/parseInt hp))))))))
+         (update-vals (select-keys lni mobs) #(update-attr % (fn [hp] (str (int (* 0.7 (Integer/parseInt hp))))) "HP")))
   (write-lni "test.ini" (merge lni
-                               (update-vals (select-keys lni mobs) #(update-hp % (fn [hp] (str (int (* 0.7 (Integer/parseInt hp)))))))))
-
-  ; -------- 分界线 --------
-  ; 批量更新装备图标 I037 - I04K
-  (def equips (->> (iterate aid/next-id "I037")
-                   (take-while #(not= % "I04L"))))
-
-  (def lni (reader/read-lni "D:\\IdeaProjects\\europe\\europe\\table\\item.ini"))
-
-  ; 将形如"|cFF871F78【史诗】红宝石项链|r\"替换为"红宝石项链"
-  (defn get-real-name [n]
-    (let [regex #"\"(\|c[0-9A-Fa-f]{8})?【.*】(.*)(\|r)?\""]
-      (if (re-matches regex n)
-        (str/replace (nth (re-find regex n) 2) "|r" "")
-        n)))
-  (get-real-name "\"|cFF871F78【史诗】红宝石项链|r\"")
-  (get-real-name "\"【普通】红宝石项链\"")
-
-
-
-  (write-lni "test.ini" (merge lni
-                               (update-vals (select-keys lni equips)
-                                            #(assoc % "abilList" "\"\""))))
-
-
-
-
-
-  ; -------- 分界线 --------
-
-
-  (def towers [
-               "o000" "o00B" "o001" "o00C" "o00D" "n000" "n011" "n017" "n001" "n012"
-               "n00Y" "n014" "n00Z" "n015" "n010" "n013" "n002" "n016" "o002" "O003"
-               "h001" "h00B" "h00F" "h00G" "h00C" "h00H" "n007" "n018" "n019" "n008"
-               "n01A" "n01B" "n01C" "n01D" "n01E" "n01F" "n01G" "n01H" "n01K" "n01I"
-               "n01J" "n01L" "n01M" "n01N" "n01O" "H004" "e000" "e00A" "e00B" "e001"
-               "e00D" "e00C" "n003" "n01Q" "n01R" "n01S" "n01T" "n01U" "n01V" "n01W"
-               "n01X" "n01Y" "n01Z" "n020" "n021" "n022" "n023" "n024" "n025" "n026"
-               "n027" "H000" "n00A" "n028" "n029" "n02A" "n02B" "n02C" "n02D" "n02E"
-               "n00C" "n02F" "n02G" "n00B" "n02H" "n02I" "n02J" "n02K" "n02L" "n02M"
-               "n00E" "n02N" "n02O" "n02P" "n02Q" "n02R" "n02S" "N00G" "h00O" "h00P"
-               "h00Q" "h00R" "h00S" "h00T" "h00U" "h00V" "h00W" "h00X" "h00Y" "h00Z"
-               "h010" "h011" "h012" "h013" "h014" "h015" "H017" "o00S" "o00U" "o00T"
-               "o00V" "o00W" "O00X" "O00Y" "o010" "o00Z"])
-
-  (write-lni "test.ini"
-             (merge lni
-                    (update-vals (select-keys lni mobs)
-                                 #(update-attr %
-                                               (fn [dmg] (str (int (* 0.33 (Integer/parseInt dmg)))))
-                                               "HP"))))
-
-
+                               (update-vals (select-keys lni mobs) #(update-attr % (fn [hp] (str (int (* 0.7 (Integer/parseInt hp))))) "HP"))))
 
   ;; 可用人口
   (def tower-food {"O100" 1
@@ -166,12 +97,6 @@
                    "O11H" 1
                    "O11I" 1
                    "O11L" 1})
-  ;(write-lni "test.ini"
-  ;           (merge lni
-  ;                  (update-vals (select-keys lni (keys tower-food))
-  ;                               #(update-attr %
-  ;                                             (fn [food] (str (get tower-food food)))
-  ;                                             "fused"))))
 
   (write-lni
     "test.ini"
