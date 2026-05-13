@@ -1,7 +1,7 @@
 (ns gsein-war3.lni.reader
   (:require [clojure.java.io :as jio]
             [clojure.string :as str]
-            [flatland.ordered.map :as an-alias]))
+            [flatland.ordered.map :as ordered]))
 
 (defn- is-id-line [line]
   ;; 判断LNI文件中的一行是否是ID行
@@ -9,13 +9,9 @@
   (let [trimmed-line (str/trim line)]
     (re-matches #"^\[[A-Za-z0-9]{4}\]$" trimmed-line)))
 
-(comment
-  (is-id-line "[n001] "),)
-
-
 (defn- read-chunk-body [chunk]
   ;; 读取一个chunk的body
-  (loop [result (an-alias/ordered-map) k nil v "" lines chunk]
+  (loop [result (ordered/ordered-map) k nil v "" lines chunk]
     (let [line (first lines)]
       (cond (empty? lines)
             result
@@ -38,44 +34,32 @@
             :else
             (let [cv (str/trim line)
                   pv (get result k)
-                  nv (str pv "\r\n" cv)]
+                  nv (str pv (System/lineSeparator) cv)]
               (recur (assoc result k nv)
                      k nv (rest lines)))))))
 
-
-
 (defn- read-chunk [lni-file]
   ;; 将lni文件读取为由id和body组成的map
-  (let [chunk (->> (line-seq (jio/reader lni-file))
-                   (partition-by is-id-line)
-                   (apply hash-map))
-        get-id (fn [id-line] (-> id-line
-                                 first
-                                 (#(subs % 1 (- (count %) 1)))
-                                 ))]
-    (-> chunk
-        (update-keys get-id))))
+  (let [partitions (->> (line-seq (jio/reader lni-file))
+                        (partition-by is-id-line))
+        ;; 过滤掉开头的非 ID 分区（如空行、注释、BOM）
+        id-partitions (partition 2 (drop-while #(not (is-id-line (first %))) partitions))
+        get-id (fn [id-lines]
+                 (let [line (first id-lines)]
+                   (when (< 2 (count line))
+                     (subs line 1 (dec (count line))))))]
+    (into {} (map (fn [[id body]] [(get-id id) (vec body)]) id-partitions))))
 
 (defn read-lni [lni-file]
   ;; 读取lni文件
-  (let [chunk (read-chunk lni-file)]
-    (-> chunk
-        (update-vals read-chunk-body)
-        )))
+  (let [file (jio/file lni-file)]
+    (cond
+      (not (.exists file))
+      (throw (java.io.FileNotFoundException. (str "LNI file not found: " lni-file)))
 
-(comment
-  (def chunks (read-chunk "D:\\IdeaProjects\\jztd-reborn\\jztd\\table\\ability.ini"))
-  (get chunks "Aetl")
-  (read-chunk-body (get chunks "Aetl"))
-  (-> (read-lni "D:\\IdeaProjects\\jztd-reborn\\jztd\\table\\ability.ini")
-      (update-vals #(get % "Name")))
+      (not (.isFile file))
+      (throw (IllegalArgumentException. (str "Not a file: " lni-file)))
 
-  (->> (read-lni "D:\\IdeaProjects\\jzjh-reborn\\jzjh\\table\\doodad.ini")
-       (map val)
-       (map #(get % "file"))
-       (filter identity)
-       (map #(read-string %))
-       (distinct)
-       (sort))
-
-  )
+      :else
+      (-> (read-chunk file)
+          (update-vals read-chunk-body)))))
