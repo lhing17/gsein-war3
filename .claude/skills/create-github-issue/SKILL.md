@@ -115,4 +115,4 @@ User: "把刚才讨论的方案提一个 issue 跟踪"
 
 ## Notes
 - If the user provides a screenshot, include it in the issue body.
-- **DO NOT** analyze the reason for the issue. Just describe the problem or request as per the user's description.
+- **DO NOT** analyze the reason for the issue. Just describe the problem or request as per the user's description.`
