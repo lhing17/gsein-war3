@@ -1,33 +1,28 @@
 (ns gsein-war3.tools.unit-generator
+  "批量生成单位定义的模板渲染工具。"
   (:require [selmer.parser :as sp]
             [clojure.java.io :as jio]
-            [clojure.string :as str]
-            [gsein-war3.lni.available-id :as aid]))
+            [clojure.string :as str]))
 
-;; 批量生成单位
-(defn generate-units [units]
-  (->> units
-       (map #(sp/render-file (jio/resource "templates/单位基础.ini") %))
-       (str/join "\n")))
+(def ^:private unit-template-path
+  "单位基础模板资源路径。"
+  "templates/单位基础.ini")
 
+(defn generate-units
+  "根据 units 数据列表渲染单位定义字符串。
+   units 为 map 序列，每个 map 应包含模板所需的变量。
+   返回渲染后的 LNI 格式字符串。"
+  [units]
+  {:pre [(sequential? units)]}
+  (if-let [tpl (jio/resource unit-template-path)]
+    (->> units
+         (map #(sp/render-file tpl %))
+         (str/join "\n"))
+    (throw (ex-info "Template not found"
+                    {:template unit-template-path
+                     :units-count (count units)}))))
 
 (comment
-  (def mobs ["马贼" "强盗" "五虎门小喽啰" "白莲教众" "茅山弟子" "崆峒弟子" "熊熊" "蒙古骑兵" "十恶不赦"])
-  (def bosses ["马贼王" "马贼王中王" "凤天南" "方腊" "王璁儿" "葛洪" "茅盈" "唐文亮" "关能" "南海鳄神" "云中鹤" "段延庆" "叶二娘"
-               "采花大盗" "宋远桥" "俞莲舟" "俞岱岩" "张松溪" "张翠山" "殷梨亭" "莫声谷" "黄药师" "欧阳锋" "一灯大师" "洪七公" "王重阳"
-               "李莫愁" "丁敏君" "丘处机" ])
-  (def project-dir "D:/IdeaProjects/small/small")
-  (def mob-ids (aid/get-available-ids (count mobs) (aid/project-id-producer project-dir) :unit "n007"))
-  (->> mobs
-       (map #(hash-map :id % :unit-type "普通" :name %2) mob-ids)
-       (generate-units)
-       (spit "a.txt")
-       )
-
-  (def boss-ids (aid/get-available-ids (count bosses) (aid/project-id-producer project-dir) :unit "n00G"))
-  (->> bosses
-       (map #(hash-map :id % :unit-type "BOSS" :name %2) boss-ids)
-       (generate-units)
-       (spit "a.txt"))
-
-  ,)
+  (generate-units
+    [{:id "n001" :unit-type "普通" :name "测试单位"}])
+  )
