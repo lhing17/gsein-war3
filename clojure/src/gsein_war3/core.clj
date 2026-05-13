@@ -50,6 +50,7 @@
 (def write-image img-split/write-image)
 (def replace-constant const-rep/replace-literal-with-constant)
 (def search-text txt-search/search-text)
+(def unit-positions unit-plc/unit-positions)
 (def unit-placer unit-plc/unit-placer)
 (def fourcc nbc/fourcc)
 (def hex-to-fourcc nbc/hex-to-fourcc)
