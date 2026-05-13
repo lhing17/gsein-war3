@@ -4,3 +4,4 @@
 
 - 修复 `tools.image-splitter/write-image` 中输出路径拼接错误导致的图片切割结果未写入目标目录的问题（#5）
 - 启动暗色主题视觉升级（#6）：建立 War3 风格配色系统，完成 App.vue 全局布局与 Home.vue 首页暗色化，前端构建验证通过
+- 修复 `title-generator` 中 JAR 模式下默认背景图片与模板 MDX 资源读取失败的问题（#7）：将 `(jio/file (jio/resource ...))` 改为直接传递 URL 或使用流复制，验证默认背景和自定义背景均可正常生成称号

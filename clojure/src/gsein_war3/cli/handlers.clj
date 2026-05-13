@@ -171,7 +171,7 @@
                     "BLACK" Color/BLACK
                     "WHITE" Color/WHITE
                     (Color/decode color-str))
-            wing (if wing-file (jio/file wing-file) (jio/file (jio/resource "images/background/3.png")))
+            wing (if wing-file (jio/file wing-file) (jio/resource "images/background/3.png"))
             kwargs (cond-> {:font-name font-name
                             :font-size font-size}
                     template-mdx-path (assoc :template-mdx-path template-mdx-path)

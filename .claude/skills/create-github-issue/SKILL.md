@@ -114,4 +114,5 @@ User: "把刚才讨论的方案提一个 issue 跟踪"
 → Create a `[Feature]` issue summarizing the discussed plan with a task checklist.
 
 ## Notes
-If the user provides a screenshot, include it in the issue body.
+- If the user provides a screenshot, include it in the issue body.
+- **DO NOT** analyze the reason for the issue. Just describe the problem or request as per the user's description.

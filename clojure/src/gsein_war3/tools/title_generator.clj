@@ -66,14 +66,14 @@
   (let [eng-name (pinyin/get-pinyin-name name)
         blp-file (jio/file out-dir "temp" (str eng-name ".blp"))
         blp-parent (.getParentFile blp-file)
-        template-mdx (jio/file (jio/resource template-mdx-path))
         mdx-file (jio/file out-dir "temp" (str eng-name ".mdx"))]
     (println (.getAbsolutePath blp-parent))
     (.mkdirs blp-parent)
     (delete-files-in-dir blp-parent)
     (let [img (create-img name 256 128 color wing-file font-name font-size)]
       (ImageIO/write img "blp" blp-file))
-    (FileUtils/copyFile template-mdx mdx-file)
+    (with-open [in (jio/input-stream (jio/resource template-mdx-path))]
+      (jio/copy in mdx-file))
     (converter/replace-blp mdx-file old-texture-path (.getName blp-file))))
 
 (defn- get-scaled-image [^BufferedImage img w h]
@@ -95,12 +95,12 @@
                                   old-texture-path  "war3mapImported\\kangkang.blp"}}]
   (let [blp-file (jio/file out-dir "temp" (str blp-name ".blp"))
         blp-parent (.getParentFile blp-file)
-        template-mdx (jio/file (jio/resource template-mdx-path))
         mdx-file (jio/file out-dir "temp" (str blp-name ".mdx"))
         buffered-img (get-scaled-image (ImageIO/read (jio/file img)) 256 128)]
     (.mkdirs blp-parent)
     (ImageIO/write buffered-img "blp" blp-file)
-    (FileUtils/copyFile template-mdx mdx-file)
+    (with-open [in (jio/input-stream (jio/resource template-mdx-path))]
+      (jio/copy in mdx-file))
     (converter/replace-blp mdx-file old-texture-path (.getName blp-file))))
 
 (comment
