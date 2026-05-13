@@ -16,3 +16,4 @@
 - 重构 `cli/core.clj`（#9）：将 `subcommands` 数据抽离到 `resources/cli-commands.edn`，核心逻辑提取为纯函数 `run-command`；`-main` 仅保留一处 `System/exit`；子命令键改为 keyword；添加顶层 try/catch 兜底；CLI 验证正常
 - 重构 `cli/handlers.clj`（#10）：重命名 `ok`→`success-response`、`err`→`error-response`；`parse-int`/`parse-edn` 增加安全校验；新增 `safe-parse-double` 避免 `NumberFormatException`；`unit-place` 增加参数校验；提取 `generate-batch-objects` 统一 `generate-units` 与 `generate-items` 公共逻辑；拆分 `generate-towers` 长链式表达式；`defhandler` 支持 `debug=true` 保留堆栈；构建与 CLI 验证通过
 - 重构 `config.clj`（#11）：`get-config` 增加异常处理（文件缺失、EDN 语法错误均给出友好提示）；新增 `get-config-or-default` 在缺失时返回空 map；使用 `with-open` 确保流关闭；构建验证通过
+- 重构 `core.clj`（#12）：为核心命名空间添加 docstring，重新导出各子模块最常用的公共 API（BLP 生成、LNI 读写、MDX 处理、批量生成器等）；补充常用颜色常量；更新 core-test 验证导出；构建与测试通过
