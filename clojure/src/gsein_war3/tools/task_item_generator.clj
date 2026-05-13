@@ -1,18 +1,32 @@
 (ns gsein-war3.tools.task-item-generator
+  "任务物品生成器：接收任务数据列表，渲染为 LNI 格式的物品定义。"
   (:require [selmer.parser :as sp]
             [clojure.java.io :as jio]
             [clojure.string :as str]))
 
-(defn generate-tasks [tasks]
-  (->> tasks
-       (map #(sp/render-file (jio/resource "templates/任务物品.ini") %))
-       (str/join "\n")))
+(def ^:private task-template-path
+  "任务物品模板资源路径。"
+  "templates/任务物品.ini")
+
+(defn generate-tasks
+  "根据 tasks 数据列表渲染任务物品定义字符串。
+   tasks 为 map 序列，每个 map 应包含模板所需的变量。
+   返回渲染后的 LNI 格式字符串。"
+  [tasks]
+  {:pre [(sequential? tasks)]}
+  (if-let [tpl (jio/resource task-template-path)]
+    (->> tasks
+         (map #(sp/render-file tpl %))
+         (str/join "\n"))
+    (throw (ex-info "Template not found"
+                    {:template task-template-path
+                     :tasks-count (count tasks)}))))
 
 (comment
-  (def tasks [{:description "天气转凉了，天地会的英雄们还没有过冬的衣服穿，朋友请帮我打些狼皮和野猪皮吧，我要用来做过冬的衣服"
-               :hint "杀掉5只野狼和5只野猪"
-               :difficulty "简单，游戏开局时即可完成"
-               :award "江湖经验+1000、声望+50、"
-               :name "新手任务"}])
-
-  ,)
+  (generate-tasks
+    [{:description "测试任务描述"
+      :hint "测试提示"
+      :difficulty "简单"
+      :award "经验+100"
+      :name "测试任务"}])
+  )
