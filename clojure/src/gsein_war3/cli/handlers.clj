@@ -299,9 +299,9 @@
       :else
       (let [lni-map (lni-reader/read-lni lni-file)
             towers (->> (tower-gen/get-towers lni-map tower-ids)
-                        (map #(assoc % :name (get % "Name"))))
+                        (map #(assoc % :name (tower-gen/strip-quotes (get % "Name")))))
             ability-ids (aid/get-available-ids (count towers) (aid/project-id-producer project-dir) :ability "A100")
-            ability-list (map (fn [id tower] {:id id :unit-id (:id tower) :name (subs (:name tower) 1 (dec (count (:name tower))))}) ability-ids towers)
+            ability-list (map (fn [id tower] {:id id :unit-id (:id tower) :name (:name tower)}) ability-ids towers)
             abilities-with-art (map (fn [a] (assoc a :art (get-in lni-map [(:unit-id a) "Art"] tower-gen/default-art))) ability-list)
             abilities (tower-gen/generate-tower-building-ability towers project-dir)
             items (tower-gen/generate-tower-building-item abilities-with-art project-dir)]
