@@ -62,9 +62,11 @@
 
 (defn write-image [^image img ^String path names format]
   (let [parts (:parts img)
-        named-parts (map vector names parts)]
+        named-parts (map vector names parts)
+        out-dir (jio/file path)]
+    (.mkdirs out-dir)
     (doseq [[name part] named-parts]
-      (with-open [out (jio/output-stream (str path name "." format))]
+      (with-open [out (jio/output-stream (jio/file out-dir (str name "." format)))]
         (ImageIO/write part format out)))))
 
 (comment

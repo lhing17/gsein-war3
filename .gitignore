@@ -21,6 +21,7 @@ pom.xml.asc
 
 # Clojure build artifacts (in clojure/ subdir)
 clojure/target/
+clojure/.lein/
 clojure/.lein-*
 clojure/.nrepl-port
 clojure/classes/
