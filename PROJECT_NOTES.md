@@ -35,3 +35,4 @@
 - 重构 `tools/text_searcher.clj`（#26）：将 `slurp` 替换为 `jio/reader` + `line-seq` 流式读取，避免大文件/二进制文件导致内存问题；添加文本扩展名白名单过滤二进制文件；为文件读取添加 try/catch，单个文件失败不中断整体搜索；显式指定 UTF-8 编码；函数重命名为 `search-files` 并保留 `search-text` 别名向后兼容；添加 docstring；同步更新 `core.clj` 导出与 core-test；构建与测试通过
 - 重构 `tools/task_item_generator.clj`（#25）：添加 `:pre [(sequential? tasks)]` 输入校验；模板渲染前检查资源存在性，缺失时抛出携带上下文信息的 `ex-info`；清理 comment 块中的项目特定硬编码数据；提取模板路径为命名常量；新增单元测试覆盖空列表、非法参数与正常渲染；构建与测试通过
 - 推进暗色主题视觉升级（#6）：完成图标系统设计——安装 `@iconify/vue` 引入 `game-icons` 奇幻风格图标集；新建 `GwIcon.vue` 统一图标封装组件，支持 glow 光晕模式与菜单激活态金色高亮；替换 App.vue 侧边栏与 Home.vue 配置面板中的 ElementPlus 默认图标为符文/城堡/锻造等 War3 主题图标；补充 theme.css 图标系统样式变量；前端构建验证通过
+- 修复前端暗色主题未生效问题（#35）：`main.ts` 中添加 `document.documentElement.classList.add('dark')`，使 `html.dark` CSS 选择器生效，ElementPlus 输入框、下拉框等组件背景色正确切换为暗色；前端构建验证通过
