@@ -20,3 +20,4 @@
 - 重构 `lni/available_id.clj`（#13）：修复 `next-id` 溢出崩溃隐患（ID 空间耗尽时抛出友好异常）；`next-char` 消除魔法数字；`inc-by-index` 改用 `StringBuilder` 避免中间集合；`available?` 预转小写 set 实现 O(1) 查询；`project-id-producer` 使用 `memoize` 缓存避免重复读文件；`get-available-ids` 预计算 ID 集合；新增 5 个单元测试覆盖边界情况；构建与测试通过
 - 重构 `lni/writer.clj`（#15）：`write-chunk-body`/`write-chunk` 改用 `str/join`+`map` 替代低效的 `mapcat`+`apply str`；删除重复的 `update-hp`，统一使用 `update-attr`；`write-lni` 自动创建父目录；将 comment 块专用 require 移入 comment；构建与测试通过
 - 重构 `mdx/converter.clj`（#17）：修复 `RandomAccessFile` 资源泄漏（try/finally 确保关闭）；`write-int` 改用 `ByteBuffer` 简化；`write-str` 增加长度溢出检查；`replace-blp` 增加备份恢复机制防止数据损坏；使用系统临时目录存放 tmp 文件；返回替换统计 `{:replaced N}`；构建与测试通过
+- 重构 `mdx/parser.clj`（#18）：修复 `parse` 资源泄漏（将整个解析逻辑移入 try）；统一返回值为向量；`parse-content` 修复 `:else` 分支丢弃 `rs` 的 bug，使用 `into` 累积 TEXS 结果；`parse-textures` 改用 `conj` 保持正序；`read-str` 增加截断检测；提取 `chunk-keyword-size`/`texture-path-len` 常量；构建与测试通过
