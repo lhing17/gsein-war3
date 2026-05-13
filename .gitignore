@@ -16,7 +16,7 @@ pom.xml.asc
 .calva/repl.calva-repl
 .lsp/.cache
 .clj-kondo/.cache
-.claude/scheduled_tasks.lock
+.claude/
 .worktrees/
 
 # Clojure build artifacts (in clojure/ subdir)

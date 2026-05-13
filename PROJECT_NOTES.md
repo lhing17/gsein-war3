@@ -7,3 +7,4 @@
 - 修复 `title-generator` 中 JAR 模式下默认背景图片与模板 MDX 资源读取失败的问题（#7）：将 `(jio/file (jio/resource ...))` 改为直接传递 URL 或使用流复制，验证默认背景和自定义背景均可正常生成称号
 - 推进暗色主题视觉升级（#6）：完成 ElementPlus 全组件暗色覆盖（按钮渐变、输入框金色聚焦、卡片/表格/表单/标签等），并添加页面切换淡入动效与侧边栏菜单发光指示条
 - 推进暗色主题视觉升级（#6）：建立全局页面布局系统（统一页头装饰下划线、段落排版、卡片阴影层级），构建验证通过
+- 重构 `blp/generator.clj`（#8）：重命名 `map-deal-image!`→`apply-processors`、`generate-blps`→`generate-blps!`；提取 War3 路径常量；简化 `get-project-target-dir` 为字符串操作；清理大量 REPL 示例 comment 块；CLI 验证 BLP 生成正常

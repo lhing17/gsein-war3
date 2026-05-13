@@ -65,7 +65,7 @@
       (str/blank? project-dir)
       (err "--project-dir is required")
       :else
-      (ok (blp/generate-blps input-file active-type temp-dir project-dir)))))
+      (ok (blp/generate-blps! input-file active-type temp-dir project-dir)))))
 
 (defhandler available-ids [opts]
   (let [project-dir (:project-dir opts)
