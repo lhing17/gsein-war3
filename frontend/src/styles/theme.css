@@ -274,6 +274,27 @@ html.dark .el-notification {
   box-shadow: 0 0 8px rgba(201, 162, 39, 0.4);
 }
 
+/* Icon System */
+.gw-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gw-text-secondary);
+  transition: color 0.2s ease;
+}
+
+.gw-icon--glow {
+  filter: drop-shadow(0 0 4px rgba(201, 162, 39, 0.3));
+}
+
+.el-menu-item.is-active .gw-icon {
+  color: var(--gw-accent-gold);
+}
+
+.el-menu-item:hover .gw-icon {
+  color: var(--gw-accent-gold-light);
+}
+
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 6px;
