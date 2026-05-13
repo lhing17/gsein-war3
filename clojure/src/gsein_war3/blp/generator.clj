@@ -82,11 +82,15 @@
 (defn- output-blp-fn
   "根据类型获取输出blp的函数"
   [type]
-  (case type
-    :active (output-blp identity :active command-dir "BTN")
-    :active-dark (output-blp #(img/adjust-brightness % -50) :passive command-disabled-dir "DISBTN")
-    :passive (output-blp identity :passive command-dir "PASBTN")
-    :passive-dark (output-blp #(img/adjust-brightness % -64) :passive command-disabled-dir "DISPASBTN")))
+  (let [config (get type-config type)
+        brightness-fn (:brightness-fn config identity)
+        border (:border config :passive)
+        dir-fn (case (:dir config)
+                 :command-dir command-dir
+                 :command-disabled-dir command-disabled-dir
+                 identity)
+        prefix (:prefix config "")]
+    (output-blp brightness-fn border dir-fn prefix)))
 
 (defn- get-fn-by-type
   "根据类型获取输出blp的函数"
