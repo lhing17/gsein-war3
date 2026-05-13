@@ -14,4 +14,5 @@
     (is (fn? core/xls->map))
     (is (fn? core/get-config))
     (is (fn? core/get-config-or-default))
+    (is (fn? core/search-files))
     (is (fn? core/rebuild-listfile))))

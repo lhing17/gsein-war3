@@ -49,6 +49,7 @@
 (def split-image img-split/split-image)
 (def write-image img-split/write-image)
 (def replace-constant const-rep/replace-literal-with-constant)
+(def search-files txt-search/search-files)
 (def search-text txt-search/search-text)
 (def unit-positions unit-plc/unit-positions)
 (def unit-placer unit-plc/unit-placer)
